@@ -211,10 +211,12 @@ $(document).ready(function() {
         }
 
         tagInput.addEventListener('keydown', function(e) {
+           
             if ((e.key === 'Enter' || e.key === ',') && checkTagLimit()) {
                 const tag = tagInput.value.trim().replace(/,$/, '');
                 addTag(tag);
                 e.preventDefault();
+                
             }
         });
     }
