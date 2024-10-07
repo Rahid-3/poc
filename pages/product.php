@@ -21,7 +21,7 @@
             <div class="card-header">
                 <h3 class="card-title">Shopify 2k Variants Creation</h3>
                 <div class="card-tools">
-                    <button type="button" class="btn btn-default btn-xs" id="add_new_btn">Add Product</button>
+                    <button type="button" class="btn btn-default btn-xs" id="add_new_btn">Add New Product</button>
                 </div>
             </div>
             <div class="card-body">
@@ -62,8 +62,8 @@
             </button>
         </div>
         <div class="card-body">
-            <form class="form-horizontal" enctype="multipart/form-data">
-                <input type="hidden" name="action" value="add_new_product_info">
+            <!-- <form class="form-horizontal" id="new_product_form" type="multipart/form-data"> -->
+                <!-- <input type="hidden" name="action" value="add_new_product_info"> -->
 
                 <div class="form-group row">
                     <label for="pro_shop" class="col-sm-2 col-form-label">Shop</label>
@@ -95,7 +95,7 @@
                     <div class="form-group row variant-group" id="variant-1">
                         <label for="tags" class="col-sm-2 col-form-label">Product Variant 1</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" name="pro_nm_opt1" id="pro_nm_opt1" placeholder="Product Option Name 1" autocomplete="off">
+                            <input type="text" class="form-control mb-1" name="pro_nm_opt1" id="pro_nm_opt1" placeholder="Product Option Name 1" autocomplete="off">
                             <div class="tags-input-container" id="tags-input-container1">
                                 <input type="text" class="form-control" id="tag-input1" placeholder="Add tags..." autocomplete="off">
                             </div>
@@ -107,11 +107,11 @@
 
                 <div class="form-group row">
                     <div class="col-sm-12 text-center">
-                        <button type="submit" class="btn btn-info">Add Product</button>
+                        <button type="submit" id="add_product_btn" class="btn btn-info add_product_btn">Add Product</button>
                         <button type="button" class="btn btn-danger" id="close_form">Cancel</button>
                     </div>
                 </div>
-            </form>
+            <!-- </form> -->
         </div>
     </div>
 </script>
@@ -141,7 +141,7 @@ $(document).ready(function() {
     // Add product form display logic
     $("#add_new_btn").click(function() {
         var newUrl = "index.php?do=addproduct";
-        history.pushState({page: "addproduct"}, "Add Product", newUrl);
+        history.pushState({page: "addproduct"}, "Add New Product", newUrl);
 
         var template = $("#add-product-form-template").html();
         $("#master_div_product").html(template);
@@ -225,6 +225,7 @@ $(document).ready(function() {
         const totalProductVariants = calculateTotalProductVariants();
 
         if (totalProductVariants > 100) {
+            document.getElementById('tag-input2').value = '';
             alert('The limit is 100 product variant combinations. You cannot add more tags.');
             disableTagInputs();
         } else {
@@ -252,7 +253,9 @@ $(document).ready(function() {
     function checkTagLimit() {
         const totalProductVariants = calculateTotalProductVariants();
         if (totalProductVariants >= 100) {
+            document.getElementById('tag-input2').value = ''; // Clear the input field
             alert('The limit is 100 product variant combinations. You cannot add more tags.');
+            disableTagInputs();
             return false;
         }
         return true;
@@ -271,7 +274,7 @@ $(document).ready(function() {
             <div class="form-group row variant-group" id="variant-${variantCount}">
                 <label for="tags" class="col-sm-2 col-form-label">Product Variant ${variantCount}</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" name="pro_nm_opt${variantCount}" id="pro_nm_opt${variantCount}" placeholder="Product Option Name ${variantCount}" autocomplete="off">
+                    <input type="text" class="form-control mb-1" name="pro_nm_opt${variantCount}" id="pro_nm_opt${variantCount}" placeholder="Product Option Name ${variantCount}" autocomplete="off">
                     <div class="tags-input-container" id="tags-input-container${variantCount}">
                         <input type="text" class="form-control" id="tag-input${variantCount}" placeholder="Add tags..." autocomplete="off">
                     </div>
@@ -288,6 +291,10 @@ $(document).ready(function() {
 });
 </script>
 
-
-
-
+<script>
+$(document).on('click', '.add_product_btn', function() {
+    var currentURL = window.location.href;
+    var newUrl = "index.php?do=newproduct";
+    history.pushState({page: "newproduct"}, "Add Product", newUrl);
+});
+</script>
