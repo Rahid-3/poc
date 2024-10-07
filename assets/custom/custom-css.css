@@ -29,3 +29,37 @@
 .cursor-pointer{
     cursor: pointer;
 }
+
+/* Start Style for the Product Tag by R Dev */
+.tags-input-container {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.tags-input-container .tag {
+    display: inline-flex;
+    align-items: center;
+    background-color: #e0e0e0;
+    color: #333;
+    padding: 5px;
+    border-radius: 3px;
+    margin: 5px;
+}
+
+.tags-input-container .tag .remove-tag {
+    margin-left: 5px;
+    cursor: pointer;
+    color: red;
+}
+
+.tags-input-container input {
+    border: none;
+    outline: none;
+    flex: 1;
+    min-width: 100px;
+}
+/* End Style for the Product Tag by R Dev */
