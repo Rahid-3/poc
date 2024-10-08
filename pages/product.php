@@ -40,8 +40,8 @@
                                     <tr><th>#</th><th>Student Name</th><th>Email</th><th>Mobile</th><th>Date</th><th>Actions</th></tr>
                                 </thead>
                                 <tbody>
-                                    <tr><td>1</td><td>Mike</td><td>mike@gmail.com</td><td>8888888888</td><td>11 Sep 2024</td><td><button type="button" class="btn btn-primary btn-xs edit-student-btn" data-id="17">Edit</button> <button type="button" class="btn btn-danger btn-xs delete-student-btn" data-id="17">Delete</button></td></tr>
-                                    <tr><td>2</td><td>John</td><td>jd@gmail.com</td><td>1234567890</td><td>11 Sep 2024</td><td><button type="button" class="btn btn-primary btn-xs edit-student-btn" data-id="16">Edit</button> <button type="button" class="btn btn-danger btn-xs delete-student-btn" data-id="16">Delete</button></td></tr>
+                                    <tr><td>1</td><td>Ranbir Kapoor</td><td>ranbir@gmail.com</td><td>8888888888</td><td>11 Sep 2024</td><td><button type="button" class="btn btn-primary btn-xs edit-student-btn" data-id="17">Edit</button> <button type="button" class="btn btn-danger btn-xs delete-student-btn" data-id="17">Delete</button></td></tr>
+                                    <tr><td>2</td><td>Sunny</td><td>sanny@gmail.com</td><td>1234567890</td><td>11 Sep 2024</td><td><button type="button" class="btn btn-primary btn-xs edit-student-btn" data-id="16">Edit</button> <button type="button" class="btn btn-danger btn-xs delete-student-btn" data-id="16">Delete</button></td></tr>
                                 </tbody>
                             </table>
                         </div>
@@ -131,8 +131,8 @@ $(document).ready(function() {
                     <tr><th>#</th><th>Student Name</th><th>Email</th><th>Mobile</th><th>Date</th><th>Actions</th></tr>
                 </thead>
                 <tbody>
-                    <tr><td>1</td><td>Mike</td><td>mike@gmail.com</td><td>8888888888</td><td>11 Sep 2024</td><td><button type="button" class="btn btn-primary btn-xs edit-student-btn" data-id="17">Edit</button> <button type="button" class="btn btn-danger btn-xs delete-student-btn" data-id="17">Delete</button></td></tr>
-                    <tr><td>2</td><td>John</td><td>jd@gmail.com</td><td>1234567890</td><td>11 Sep 2024</td><td><button type="button" class="btn btn-primary btn-xs edit-student-btn" data-id="16">Edit</button> <button type="button" class="btn btn-danger btn-xs delete-student-btn" data-id="16">Delete</button></td></tr>
+                    <tr><td>1</td><td>Ranbir Kapoor</td><td>ranbir@gmail.com</td><td>8888888888</td><td>11 Sep 2024</td><td><button type="button" class="btn btn-primary btn-xs edit-student-btn" data-id="17">Edit</button> <button type="button" class="btn btn-danger btn-xs delete-student-btn" data-id="17">Delete</button></td></tr>
+                    <tr><td>2</td><td>Sunny</td><td>sanny@gmail.com</td><td>1234567890</td><td>11 Sep 2024</td><td><button type="button" class="btn btn-primary btn-xs edit-student-btn" data-id="16">Edit</button> <button type="button" class="btn btn-danger btn-xs delete-student-btn" data-id="16">Delete</button></td></tr>
                 </tbody>
             </table>
         `);
@@ -161,7 +161,6 @@ $(document).ready(function() {
             loadProductTable();
         }
     };
-    
 
     // Initialize tag input and manage tag limits
     function initTagInput(tagInputId, tagContainerId, variantId) {
@@ -212,14 +211,10 @@ $(document).ready(function() {
         }
 
         tagInput.addEventListener('keydown', function(e) {
-            //const inputField = $('#tag-input1');
-            console.log("Input Field Value: " + inputField.val());
-
             if ((e.key === 'Enter' || e.key === ',') && checkTagLimit()) {
                 const tag = tagInput.value.trim().replace(/,$/, '');
                 addTag(tag);
                 e.preventDefault();
-                
             }
         });
     }
@@ -227,15 +222,12 @@ $(document).ready(function() {
     // Function to update the tag count for each variant and check total limit
     function updateTagCount(variantId, count) {
         tagCounts[variantId] = count;
-        //console.log("tagCounts[variantId] = " + tagCounts[variantId]);
         const totalProductVariants = calculateTotalProductVariants();
-        console.log('Total product variants:', totalProductVariants);
-        if (totalProductVariants > 100 && checkTagLimit()) {
-            // document.getElementById('tag-input2').value = '';
-            alert('Update: The limit is 100 product variant combinations. You cannot add more tags.');
+
+        if (totalProductVariants > 100) {
             document.getElementById('tag-input2').value = '';
+            alert('The limit is 100 product variant combinations. You cannot add more tags.');
             disableTagInputs();
-            return false;
         } else {
             enableTagInputs(); // Re-enable the inputs if under the limit
         }
@@ -244,7 +236,6 @@ $(document).ready(function() {
     // Calculate total product variants by multiplying tag counts of all variants
     function calculateTotalProductVariants() {
         const total = Object.values(tagCounts).reduce((acc, count) => acc * (count || 1), 1);
-        //console.log('Total product variants:', total);
         return total;
     }
 
@@ -261,17 +252,14 @@ $(document).ready(function() {
     // Check if adding a new tag will exceed the limit of 100 product variant combinations
     function checkTagLimit() {
         const totalProductVariants = calculateTotalProductVariants();
-
-        if(totalProductVariants > 100){
-            //document.getElementById('tag-input2').value = ''; // Clear the input field
-            alert('Check Limit: The limit is 100 product variant combinations. You cannot add more tags.');
+        if (totalProductVariants >= 100) {
+            document.getElementById('tag-input2').value = ''; // Clear the input field
+            alert('The limit is 100 product variant combinations. You cannot add more tags.');
             disableTagInputs();
             return false;
         }
         return true;
-        
     }
-
 
     // Add variant functionality
     $(document).on('click', '#add-variant-btn', function() {
@@ -308,6 +296,5 @@ $(document).on('click', '.add_product_btn', function() {
     var currentURL = window.location.href;
     var newUrl = "index.php?do=newproduct";
     history.pushState({page: "newproduct"}, "Add Product", newUrl);
-    
 });
 </script>
