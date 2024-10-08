@@ -72,13 +72,14 @@ $loginUserName = $_SESSION['login_user_name'] ?? 'VDB Admin';
                     </a>
                 </li>
                End Comment by R Dev  -->
+               <?php if (checkUserPermission('product', 'side_bar')) { ?>
                 <li class="nav-item">
-                    <a href="index.php?do=product" class="nav-link li_site_menu_item"
-                     data-page="product">
+                    <a href="index.php?do=product" class="nav-link li_site_menu_item" data-page="product,addproduct">
                      <i class="nav-icon fas fa-list"></i>                   
                           <p>Product</p>
                     </a>
                 </li>
+                <?php } ?>
                 <li class="nav-item">
                     <a href="index.php?action=admin_logout" class="nav-link li_site_menu_item" data-page="logout">
                         <i class="nav-icon far fa-circle text-danger"></i>
