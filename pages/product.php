@@ -61,10 +61,11 @@
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
+
         <div class="card-body">
             <!-- <form class="form-horizontal" id="new_product_form" type="multipart/form-data"> -->
                 <!-- <input type="hidden" name="action" value="add_new_product_info"> -->
-
+                
                 <div class="form-group row">
                     <label for="pro_shop" class="col-sm-2 col-form-label">Shop</label>
                     <div class="col-sm-10">
@@ -91,6 +92,14 @@
                     </div>
                 </div>
 
+                <div class="form-group row" id="alert" style="color:red;display:none;font-size:16px;font-weight:bold;margin-bottom: 3px;">
+                    <div class="col-sm-2"></div>
+                    <div class="col-sm-10">
+                    <div id="alert1">The limit is 100 product variant combinations. You cannot add more tags.</div>
+                    </div>
+                </div>
+
+                <!-- <div id="alert" style="color:red;display:none;font-size:20px;font-weight:bold;">The limit is 100 product variant combinations. You cannot add more tags.</div> -->
                 <div id="variant-container">
                     <div class="form-group row variant-group" id="variant-1">
                         <label for="tags" class="col-sm-2 col-form-label">Product Variant 1</label>
@@ -107,7 +116,7 @@
 
                 <div class="form-group row">
                     <div class="col-sm-12 text-center">
-                        <button type="submit" id="add_product_btn" class="btn btn-info add_product_btn">Add Product</button>
+                        <button type="submit" id="add_product_btn" class="btn btn-info add_product_btn" disabled>Add Product</button>
                         <button type="button" class="btn btn-danger" id="close_form">Cancel</button>
                     </div>
                 </div>
@@ -241,12 +250,18 @@ $(document).ready(function() {
 
     // Disable further tag inputs
     function disableTagInputs() {
+        const totalProductCountVar = calculateTotalProductVariants();
         $('input[id^="tag-input"]').attr('disabled', true);
+        $("#add_product_btn").attr('disabled', true);
+        $("#alert").show();
+        $("#alert #alert1").html("Total Enter the combination of tags: " + totalProductCountVar + " The limit is 100 product variant combinations. You need to remove tag.").show();
     }
 
     // Enable tag inputs if tag limit is under 100 combinations
     function enableTagInputs() {
         $('input[id^="tag-input"]').attr('disabled', false);
+        $("#alert").hide();
+        $("#add_product_btn").attr('disabled', false);
     }
 
     // Check if adding a new tag will exceed the limit of 100 product variant combinations
@@ -255,9 +270,11 @@ $(document).ready(function() {
         if (totalProductVariants >= 100) {
             document.getElementById('tag-input2').value = ''; // Clear the input field
             alert('The limit is 100 product variant combinations. You cannot add more tags.');
+            //$("#alert").show();
             disableTagInputs();
             return false;
         }
+        
         return true;
     }
 
