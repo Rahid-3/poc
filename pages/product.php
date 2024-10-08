@@ -40,8 +40,8 @@
                                     <tr><th>#</th><th>Student Name</th><th>Email</th><th>Mobile</th><th>Date</th><th>Actions</th></tr>
                                 </thead>
                                 <tbody>
-                                    <tr><td>1</td><td>Ranbir Kapoor</td><td>ranbir@gmail.com</td><td>8888888888</td><td>11 Sep 2024</td><td><button type="button" class="btn btn-primary btn-xs edit-student-btn" data-id="17">Edit</button> <button type="button" class="btn btn-danger btn-xs delete-student-btn" data-id="17">Delete</button></td></tr>
-                                    <tr><td>2</td><td>Sunny</td><td>sanny@gmail.com</td><td>1234567890</td><td>11 Sep 2024</td><td><button type="button" class="btn btn-primary btn-xs edit-student-btn" data-id="16">Edit</button> <button type="button" class="btn btn-danger btn-xs delete-student-btn" data-id="16">Delete</button></td></tr>
+                                    <tr><td>1</td><td>Mike</td><td>mike@gmail.com</td><td>8888888888</td><td>11 Sep 2024</td><td><button type="button" class="btn btn-primary btn-xs edit-student-btn" data-id="17">Edit</button> <button type="button" class="btn btn-danger btn-xs delete-student-btn" data-id="17">Delete</button></td></tr>
+                                    <tr><td>2</td><td>John</td><td>john@gmail.com</td><td>1234567890</td><td>11 Sep 2024</td><td><button type="button" class="btn btn-primary btn-xs edit-student-btn" data-id="16">Edit</button> <button type="button" class="btn btn-danger btn-xs delete-student-btn" data-id="16">Delete</button></td></tr>
                                 </tbody>
                             </table>
                         </div>
@@ -148,8 +148,8 @@ $(document).ready(function() {
                     <tr><th>#</th><th>Student Name</th><th>Email</th><th>Mobile</th><th>Date</th><th>Actions</th></tr>
                 </thead>
                 <tbody>
-                    <tr><td>1</td><td>Ranbir Kapoor</td><td>ranbir@gmail.com</td><td>8888888888</td><td>11 Sep 2024</td><td><button type="button" class="btn btn-primary btn-xs edit-student-btn" data-id="17">Edit</button> <button type="button" class="btn btn-danger btn-xs delete-student-btn" data-id="17">Delete</button></td></tr>
-                    <tr><td>2</td><td>Sunny</td><td>sanny@gmail.com</td><td>1234567890</td><td>11 Sep 2024</td><td><button type="button" class="btn btn-primary btn-xs edit-student-btn" data-id="16">Edit</button> <button type="button" class="btn btn-danger btn-xs delete-student-btn" data-id="16">Delete</button></td></tr>
+                    <tr><td>1</td><td>Mike</td><td>mike@gmail.com</td><td>8888888888</td><td>11 Sep 2024</td><td><button type="button" class="btn btn-primary btn-xs edit-student-btn" data-id="17">Edit</button> <button type="button" class="btn btn-danger btn-xs delete-student-btn" data-id="17">Delete</button></td></tr>
+                    <tr><td>2</td><td>John</td><td>john@gmail.com</td><td>1234567890</td><td>11 Sep 2024</td><td><button type="button" class="btn btn-primary btn-xs edit-student-btn" data-id="16">Edit</button> <button type="button" class="btn btn-danger btn-xs delete-student-btn" data-id="16">Delete</button></td></tr>
                 </tbody>
             </table>
         `);
