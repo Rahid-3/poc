@@ -121,9 +121,17 @@
                     </div>
                 </div>
             <!-- </form> -->
+             <!-- Placeholder for product variant combinations -->
+             <div id="product-variant-combinations">
+                <div class="row">
+                    <div class="col-sm-2"></div>
+                    <div class="col-sm-10" id="product-variant-combinations-inner"></div>
+                </div>
+             </div>
         </div>
     </div>
 </script>
+
 
 <!-- Inline JavaScript for handling form and tag logic -->
 <script>
@@ -309,9 +317,106 @@ $(document).ready(function() {
 </script>
 
 <script>
-$(document).on('click', '.add_product_btn', function() {
-    var currentURL = window.location.href;
-    var newUrl = "index.php?do=newproduct";
-    history.pushState({page: "newproduct"}, "Add Product", newUrl);
+$(document).ready(function() {
+
+    // Generate combinations from variants
+    function generateCombinations(variants) {
+        function combine(arr, prefix = []) {
+            if (!arr.length) return [prefix];
+            let [first, ...rest] = arr;
+            let result = [];
+            for (let value of first) {
+                result = result.concat(combine(rest, [...prefix, value]));
+            }
+            return result;
+        }
+        return combine(variants);
+    }
+
+    // Handle Add Product Button
+    $(document).on('click', '#add_product_btn', function() {
+        var productTitle = $('#pro_title').val();
+        var productDesc = $('#pro_desc').val();
+
+        //const myVar1 = extractTagTexts();
+
+        // var variant1 = extractTagTexts('tags-input-container1');
+        // var variant2 = extractTagTexts('tags-input-container2');
+        // var variant3 = extractTagTexts('tags-input-container3');
+        // console.log("This is the Array of the Size: " + variant1);
+        // var allVariants = [variant1, variant2, variant3].filter(arr => arr.length > 0);
+
+        //var allVariants = [variant1, variant2, variant3].filter(arr => arr.length > 0);
+
+        // Generate variant combinations
+
+        var variant1 = extractTagTexts('tags-input-container1') || [];
+        var variant2 = extractTagTexts('tags-input-container2') || [];
+        var variant3 = extractTagTexts('tags-input-container3') || [];
+
+        console.log("This is the Array of the Size: " + variant1);
+
+        // Filter out undefined or empty arrays (arrays with length 0)
+        var allVariants = [variant1, variant2, variant3].filter(arr => Array.isArray(arr) && arr.length > 0);
+
+        console.log(allVariants);
+
+        var variantCombinations = generateCombinations(allVariants);
+
+        // Display combinations
+        var combinationHtml = `<table>`;
+        combinationHtml += `<tr>`;
+        combinationHtml += `<td colspan="2"><h3>Generated Product Variants for ${productTitle}</h3></td>`;
+        combinationHtml += '</tr>';
+
+        combinationHtml += `<tr>`;
+        combinationHtml += `<td colspan="2">Product Title: ${productTitle}</td>`;
+        combinationHtml += '</tr>';
+
+        combinationHtml += `<tr>`;
+        combinationHtml += `<td colspan="2">Product Description: ${productDesc}</td>`;
+        combinationHtml += '</tr>';
+        variantCombinations.forEach(combination => {
+            combinationHtml += `<tr>`;
+            combinationHtml += `<td>${combination.join(' / ')}</td>`;
+            combinationHtml += `<td><input type='text' name='${combination.join('')}' value='' placeholder="price"></td>`;
+            combinationHtml += `</tr>`;
+        });
+        combinationHtml += `<tr>`;
+        combinationHtml += `<td><button type="button" id="save_product_btn" class="btn btn-info save_product_btn">Save Product</button></td>`;
+        combinationHtml += `</tr>`;
+        //combinationHtml += '</table>';
+        combinationHtml += '</table>';
+        $('#product-variant-combinations-inner').html(combinationHtml);
+    });
+
+    function extractTagTexts(tagId) {
+
+        // Select the container element
+        const container = document.getElementById(tagId);
+
+        // Check if the container exists and has any tags
+        if (container) {
+        const tags = container.querySelectorAll('.tag');
+        
+        // If tags are found, process them
+        if (tags.length > 0) {
+            const tagTexts = [];
+            
+            // Loop through each tag and get the text content (excluding the "x" span)
+            tags.forEach(tag => {
+            const tagText = tag.textContent.replace('x', '').trim();
+            tagTexts.push(tagText);
+            });
+            
+            //console.log(tagTexts); // Output: array of tag texts
+            return tagTexts;
+        } else {
+            console.log('No tags found.');
+        }
+        } else {
+            console.log('Container not found or empty.');
+        }
+    }
 });
 </script>
