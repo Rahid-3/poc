@@ -161,6 +161,7 @@ $(document).ready(function() {
             loadProductTable();
         }
     };
+    
 
     // Initialize tag input and manage tag limits
     function initTagInput(tagInputId, tagContainerId, variantId) {
@@ -211,7 +212,9 @@ $(document).ready(function() {
         }
 
         tagInput.addEventListener('keydown', function(e) {
-           
+            //const inputField = $('#tag-input1');
+            console.log("Input Field Value: " + inputField.val());
+
             if ((e.key === 'Enter' || e.key === ',') && checkTagLimit()) {
                 const tag = tagInput.value.trim().replace(/,$/, '');
                 addTag(tag);
@@ -224,11 +227,13 @@ $(document).ready(function() {
     // Function to update the tag count for each variant and check total limit
     function updateTagCount(variantId, count) {
         tagCounts[variantId] = count;
+        //console.log("tagCounts[variantId] = " + tagCounts[variantId]);
         const totalProductVariants = calculateTotalProductVariants();
-
-        if (totalProductVariants > 100) {
+        console.log('Total product variants:', totalProductVariants);
+        if (totalProductVariants > 100 && checkTagLimit()) {
+            // document.getElementById('tag-input2').value = '';
+            alert('Update: The limit is 100 product variant combinations. You cannot add more tags.');
             document.getElementById('tag-input2').value = '';
-            alert('The limit is 100 product variant combinations. You cannot add more tags.');
             disableTagInputs();
             return false;
         } else {
@@ -239,7 +244,7 @@ $(document).ready(function() {
     // Calculate total product variants by multiplying tag counts of all variants
     function calculateTotalProductVariants() {
         const total = Object.values(tagCounts).reduce((acc, count) => acc * (count || 1), 1);
-        console.log('Total product variants:', total);
+        //console.log('Total product variants:', total);
         return total;
     }
 
@@ -256,13 +261,15 @@ $(document).ready(function() {
     // Check if adding a new tag will exceed the limit of 100 product variant combinations
     function checkTagLimit() {
         const totalProductVariants = calculateTotalProductVariants();
-        if (totalProductVariants >= 100) {
-            document.getElementById('tag-input2').value = ''; // Clear the input field
-            alert('The limit is 100 product variant combinations. You cannot add more tags.');
+
+        if(totalProductVariants > 100){
+            //document.getElementById('tag-input2').value = ''; // Clear the input field
+            alert('Check Limit: The limit is 100 product variant combinations. You cannot add more tags.');
             disableTagInputs();
             return false;
         }
         return true;
+        
     }
 
 
@@ -301,5 +308,6 @@ $(document).on('click', '.add_product_btn', function() {
     var currentURL = window.location.href;
     var newUrl = "index.php?do=newproduct";
     history.pushState({page: "newproduct"}, "Add Product", newUrl);
+    
 });
 </script>
