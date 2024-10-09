@@ -323,7 +323,7 @@ class index_ctl extends index_mdl
 			$html .= '<tr>';
 			$html .= '<th>#</th>';
 			$html .= '<th>Shop</th>'; // class="sort_th" data-sort_field="shop_order_id"
-			//$html .= '<th>Installation Link</th>';
+			$html .= '<th>Install Token</th>';
 			$html .= '<th>Date</th>';
 			$html .= '<th>Actions</th>';
 			$html .= '</tr>';
@@ -338,6 +338,7 @@ class index_ctl extends index_mdl
 					$html .= '<tr>';
 					$html .= '<td>' . $sr . '</td>';
 					$html .= '<td>' . $single['shop'] . '</td>';
+					$html .= '<td>' . $single['install_token'] . '</td>';
 					/*$html .= '<td>'.$install_link.' ';
 												  $html .= '<button type="button" class="btn btn-xs btn-info copy_install_link" data-link="'.$install_link.'">Copy</button>';
 												  $html .= '</td>';*/
