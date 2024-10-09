@@ -36,7 +36,7 @@ if(isset($_SESSION['REDIRECT_URL']) && !empty($_SESSION['REDIRECT_URL'])){
 <div class="login-box">
 	<div class="login-logo">
 		<img src="assets/custom/images/VDB-LOGO-NEW.png"><br><br>
-		<a href=""><b>Bulk product creation tool</a>
+		<a href=""><b>Shopify 2k variants creation tool</a>
 	</div>
 	<div class="card">
 		<div class="card-body login-card-body">
