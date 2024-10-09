@@ -113,7 +113,7 @@ function createTags(tagText) {
 
     const deleteButton = document.createElement('button');
     deleteButton.classList.add('delete-button');
-    deleteButton.textContent = 'X';
+    deleteButton.textContent = 'x';
     deleteButton.addEventListener('click', () => {
         tagsElements.remove();
     });
@@ -312,11 +312,15 @@ tagsInputs.addEventListener('keydown', (event) => {
    $(document).on('click', '#add_product_btn', function() {
        var productTitle = $('#pro_title').val();
        var productDesc = $('#pro_desc').val();
+       var productType = $('#pro_type').val();
+       var productVender = $('#pro_vendor').val();
+       var tgs = extractTagTexts('tagsContainers', '.tagpro') || [];
+       console.log("This is the TAG: " + tgs);
    
        // Generate variant combinations
-       var variant1 = extractTagTexts('tags-input-container1') || []; // Sizes (e.g., M, L, S, XL)
-       var variant2 = extractTagTexts('tags-input-container2') || []; // Colors
-       var variant3 = extractTagTexts('tags-input-container3') || []; // Materials or any other variant
+       var variant1 = extractTagTexts('tags-input-container1', '.tag') || []; // Sizes (e.g., M, L, S, XL)
+       var variant2 = extractTagTexts('tags-input-container2', '.tag') || []; // Colors
+       var variant3 = extractTagTexts('tags-input-container3', '.tag') || []; // Materials or any other variant
    
        console.log("This is the Array of the Size: " + variant1);
    
@@ -340,6 +344,21 @@ tagsInputs.addEventListener('keydown', (event) => {
        combinationHtml += `<tr>`;
        combinationHtml += `<td colspan="2">Product Description: ${productDesc}</td>`;
        combinationHtml += `</tr>`;
+
+       combinationHtml += `<tr>`;
+       combinationHtml += `<td colspan="2">Product Type: ${productType}</td>`;
+       combinationHtml += `</tr>`;
+
+       combinationHtml += `<tr>`;
+       combinationHtml += `<td colspan="2">Product Vender: ${productVender}</td>`;
+       combinationHtml += `</tr>`;
+
+       if (tgs.length > 0) {
+           combinationHtml += `<tr>`;
+           combinationHtml += `<td colspan="2">Tags: ${tgs.join(', ')}</td>`;
+           combinationHtml += `</tr>`;
+       }
+   
    
        // If variant1 (Size Array) has values, create combinations with size headings
        if (variant1.length > 0) {
@@ -385,13 +404,14 @@ tagsInputs.addEventListener('keydown', (event) => {
        $(this).closest('tr').next('tr').find('.size-combinations').slideToggle();
    });
    
-   function extractTagTexts(tagId) {
+   function extractTagTexts(tagId, tg) {
        // Select the container element
        const container = document.getElementById(tagId);
    
        // Check if the container exists and has any tags
        if (container) {
-           const tags = container.querySelectorAll('.tag');
+           //const tags = container.querySelectorAll('.tag');
+           const tags = container.querySelectorAll(tg);
            
            // If tags are found, process them
            if (tags.length > 0) {
