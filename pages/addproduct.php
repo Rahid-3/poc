@@ -44,6 +44,25 @@
                            <input type="text" class="form-control" name="pro_desc" id="pro_desc" placeholder="Product Description">
                         </div>
                      </div>
+                     <div class="form-group row">
+                        <label for="pro_type" class="col-sm-2 col-form-label">Product Type</label>
+                        <div class="col-sm-10">
+                           <input type="text" class="form-control" name="pro_type" id="pro_type" placeholder="Product Type">
+                        </div>
+                     </div>
+                     <div class="form-group row">
+                        <label for="pro_vender" class="col-sm-2 col-form-label">Product Vender</label>
+                        <div class="col-sm-10">
+                           <input type="text" class="form-control" name="pro_vender" id="pro_vendor" placeholder="Vender">
+                        </div>
+                     </div>
+                     <div class="form-group row">
+                        <label for="pro_tag" class="col-sm-2 col-form-label">Product Tag</label>
+                        <div class="col-sm-10">
+                           <input type="text" class="form-control" name="pro_tag" id="pro_tag" placeholder="Product Tag">
+                           <div id="tagsContainers"></div>
+                        </div>
+                     </div>
                      <div class="form-group row" id="alert" style="color:red;display:none;font-size:16px;font-weight:bold;margin-bottom: 3px;">
                         <div class="col-sm-2"></div>
                         <div class="col-sm-10">
@@ -51,7 +70,7 @@
                         </div>
                      </div>
                      <div id="variant-container">
-                        <div class="form-group row variant-group" id="variant-1">
+                        <!-- <div class="form-group row variant-group" id="variant-1">
                            <label for="tags" class="col-sm-2 col-form-label">Product Variant 1</label>
                            <div class="col-sm-10">
                               <input type="text" class="form-control mb-1" name="pro_nm_opt1" id="pro_nm_opt1" placeholder="Product Option Name 1" autocomplete="off">
@@ -59,7 +78,7 @@
                                  <input type="text" class="form-control" id="tag-input1" placeholder="Add tags..." autocomplete="off">
                               </div>
                            </div>
-                        </div>
+                        </div> -->
                      </div>
                      <button type="button" id="add-variant-btn" class="btn btn-primary">Add New Variant</button>
                      <div class="form-group row">
@@ -82,8 +101,59 @@
    </section>
 </div>
 <script>
+$(document).ready(function() {
+    const tagsInputs = document.getElementById('pro_tag');
+const tagsContainers = document.getElementById('tagsContainers');
+
+// Function to create a tag
+function createTags(tagText) {
+    const tagsElements = document.createElement('span');
+    tagsElements.classList.add('tagpro');
+    tagsElements.textContent = tagText;
+
+    const deleteButton = document.createElement('button');
+    deleteButton.classList.add('delete-button');
+    deleteButton.textContent = 'X';
+    deleteButton.addEventListener('click', () => {
+        tagsElements.remove();
+    });
+
+    tagsElements.appendChild(deleteButton);
+    tagsContainers.appendChild(tagsElements);
+}
+
+// Function to check if the tag already exists
+function TagExists(tagText) {
+    const existingTags = tagsContainers.getElementsByClassName('tagpro');
+    for (let i = 0; i < existingTags.length; i++) {
+        const existingTagText = existingTags[i].firstChild.textContent.trim(); // Only get the tag's text
+        if (existingTagText === tagText) {
+            return true; // Tag already exists
+        }
+    }
+    return false; // Tag does not exist
+}
+
+// Event listener for keydown on the tag input
+tagsInputs.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter' || event.key === ',') {
+        event.preventDefault(); // Prevent default form submission behavior
+        const tagText = tagsInputs.value.trim();
+        if (tagText !== '' && !TagExists(tagText)) {
+            createTags(tagText);
+            tagsInputs.value = ''; // Clear input field
+        } else if (tagText === '') {
+            alert('Please enter a tag.'); // Optional alert for empty input
+        } else {
+            alert('This tag already exists.'); // Optional alert for duplicate tag
+        }
+    }
+});
+});
+</script>
+<script>
    $(document).ready(function() {
-       let variantCount = 1;
+       let variantCount = 0;
        let tagCounts = {}; // Store the count of tags per variant
    
        // Close form and redirect
@@ -138,14 +208,16 @@
                    tagContainer.insertBefore(newTag, tagInput);
                });
            }
-   
-           tagInput.addEventListener('keydown', function(e) {
+
+        if(tagInput){
+               tagInput.addEventListener('keydown', function(e) {
                if ((e.key === 'Enter' || e.key === ',') && checkTagLimit()) {
                    const tag = tagInput.value.trim().replace(/,$/, '');
                    addTag(tag);
                    e.preventDefault();
                }
            });
+        }
        }
    
        function updateTagCount(variantId, count) {
@@ -193,10 +265,9 @@
            }
    
            variantCount++;
-   
            const newVariant = `
                <div class="form-group row variant-group" id="variant-${variantCount}">
-                   <label for="tags" class="col-sm-2 col-form-label">Product Variant ${variantCount}</label>
+                   <label for="tags" class="col-sm-2 col-form-label">Product Variant Option ${variantCount}</label>
                    <div class="col-sm-10">
                        <input type="text" class="form-control mb-1" name="pro_nm_opt${variantCount}" id="pro_nm_opt${variantCount}" placeholder="Product Option Name ${variantCount}" autocomplete="off">
                        <div class="tags-input-container" id="tags-input-container${variantCount}">
@@ -256,7 +327,7 @@
    
        var variantCombinations = generateCombinations(allVariants);
    
-       // Display combinations for each size in variant1 (Size Array)
+       // Display combinations even if size is not provided
        var combinationHtml = `<table>`;
        combinationHtml += `<tr>`;
        combinationHtml += `<td colspan="2"><h3>Generated Product Variants for ${productTitle}</h3></td>`;
@@ -268,26 +339,36 @@
    
        combinationHtml += `<tr>`;
        combinationHtml += `<td colspan="2">Product Description: ${productDesc}</td>`;
-       combinationHtml += '</tr>';
+       combinationHtml += `</tr>`;
    
-       // Loop through each size in variant1 (Size Array)
-       variant1.forEach(size => {
-           // Filter combinations for the current size
-           let filteredCombinations = filterCombinationsBySize(variantCombinations, 0, size);
+       // If variant1 (Size Array) has values, create combinations with size headings
+       if (variant1.length > 0) {
+           variant1.forEach(size => {
+               // Filter combinations for the current size
+               let filteredCombinations = filterCombinationsBySize(variantCombinations, 0, size);
    
-           // Add a toggle button and container for the size combinations
-           combinationHtml += `<tr><td colspan="2"><h4 class="toggle-size" style="cursor:pointer;">Size: ${size} (Click to toggle)</h4></td></tr>`;
-           combinationHtml += `<tr class="combination-row"><td colspan="2"><div class="size-combinations" style="display:none;">`; // Container to toggle
+               // Add a toggle button and container for the size combinations
+               combinationHtml += `<tr><td colspan="2"><h4 class="toggle-size" style="cursor:pointer;">Size: ${size} (Click to toggle)</h4></td></tr>`;
+               combinationHtml += `<tr class="combination-row"><td colspan="2"><div class="size-combinations" style="display:none;">`; // Container to toggle
    
-           filteredCombinations.forEach(combination => {
+               filteredCombinations.forEach(combination => {
+                   combinationHtml += `<div>`;
+                   combinationHtml += `<span>${combination.join(' / ')}</span>`;
+                   combinationHtml += `<input type='text' name='${combination.join('')}' value='' placeholder="price">`;
+                   combinationHtml += `</div>`;
+               });
+   
+               combinationHtml += `</div></td></tr>`; // Close the toggle container
+           });
+       } else {
+           // If no sizes are added, just display the combinations without size headings
+           variantCombinations.forEach(combination => {
                combinationHtml += `<tr>`;
                combinationHtml += `<td>${combination.join(' / ')}</td>`;
                combinationHtml += `<td><input type='text' name='${combination.join('')}' value='' placeholder="price"></td>`;
                combinationHtml += `</tr>`;
            });
-   
-           combinationHtml += `</div></td></tr>`; // Close the toggle container
-       });
+       }
    
        combinationHtml += `<tr>`;
        combinationHtml += `<td><button type="button" id="save_product_btn" class="btn btn-info save_product_btn">Save Product</button></td>`;
@@ -295,15 +376,15 @@
        combinationHtml += '</table>';
    
        $('#product-variant-combinations-inner').html(combinationHtml);
-   
-   
    });
-       // Add toggle functionality for size headings
-       $(document).on('click', '.toggle-size', function() {
-           console.log('clicked');
-           // Find the corresponding .size-combinations div for the clicked size
-           $(this).closest('tr').next('tr').find('.size-combinations').slideToggle();
-       });
+   
+   // Add toggle functionality for size headings
+   $(document).on('click', '.toggle-size', function() {
+       console.log('clicked');
+       // Find the corresponding .size-combinations div for the clicked size
+       $(this).closest('tr').next('tr').find('.size-combinations').slideToggle();
+   });
+   
    function extractTagTexts(tagId) {
        // Select the container element
        const container = document.getElementById(tagId);
@@ -325,11 +406,13 @@
                return tagTexts;
            } else {
                console.log('No tags found.');
+               return [];
            }
        } else {
            console.log('Container not found or empty.');
+           return [];
        }
    }
-   });
-   
+});
+
 </script>
