@@ -219,6 +219,7 @@ $(document).ready(function() {
     $(document).on('click', '#add-variant-btn', function() {
         if (variantCount >= 3) {
             alert('You can add up to 3 variants only.');
+            $("#add-variant-btn").attr('disabled', true);
             return;
         }
 
@@ -250,73 +251,98 @@ $(document).ready(function() {
 <script>
 $(document).ready(function() {
 
-    // Generate combinations from variants
-    function generateCombinations(variants) {
-        function combine(arr, prefix = []) {
-            if (!arr.length) return [prefix];
-            let [first, ...rest] = arr;
-            let result = [];
-            for (let value of first) {
-                result = result.concat(combine(rest, [...prefix, value]));
-            }
-            return result;
+// Generate combinations from variants
+function generateCombinations(variants) {
+    function combine(arr, prefix = []) {
+        if (!arr.length) return [prefix];
+        let [first, ...rest] = arr;
+        let result = [];
+        for (let value of first) {
+            result = result.concat(combine(rest, [...prefix, value]));
         }
-        return combine(variants);
+        return result;
     }
+    return combine(variants);
+}
 
-    // Handle Add Product Button
-    $(document).on('click', '#add_product_btn', function() {
-        var productTitle = $('#pro_title').val();
-        var productDesc = $('#pro_desc').val();
+// Function to filter combinations by a given size
+function filterCombinationsBySize(combinations, sizeIndex, sizeValue) {
+    return combinations.filter(combination => combination[sizeIndex] === sizeValue);
+}
 
-        // Generate variant combinations
-        var variant1 = extractTagTexts('tags-input-container1') || [];
-        var variant2 = extractTagTexts('tags-input-container2') || [];
-        var variant3 = extractTagTexts('tags-input-container3') || [];
+// Handle Add Product Button
+$(document).on('click', '#add_product_btn', function() {
+    var productTitle = $('#pro_title').val();
+    var productDesc = $('#pro_desc').val();
 
-        console.log("This is the Array of the Size: " + variant1);
+    // Generate variant combinations
+    var variant1 = extractTagTexts('tags-input-container1') || []; // Sizes (e.g., M, L, S, XL)
+    var variant2 = extractTagTexts('tags-input-container2') || []; // Colors
+    var variant3 = extractTagTexts('tags-input-container3') || []; // Materials or any other variant
 
-        // Filter out undefined or empty arrays (arrays with length 0)
-        var allVariants = [variant1, variant2, variant3].filter(arr => Array.isArray(arr) && arr.length > 0);
+    console.log("This is the Array of the Size: " + variant1);
 
-        console.log(allVariants);
+    // Filter out undefined or empty arrays (arrays with length 0)
+    var allVariants = [variant1, variant2, variant3].filter(arr => Array.isArray(arr) && arr.length > 0);
 
-        var variantCombinations = generateCombinations(allVariants);
+    console.log(allVariants);
 
-        // Display combinations
-        var combinationHtml = `<table>`;
-        combinationHtml += `<tr>`;
-        combinationHtml += `<td colspan="2"><h3>Generated Product Variants for ${productTitle}</h3></td>`;
-        combinationHtml += '</tr>';
+    var variantCombinations = generateCombinations(allVariants);
 
-        combinationHtml += `<tr>`;
-        combinationHtml += `<td colspan="2">Product Title: ${productTitle}</td>`;
-        combinationHtml += '</tr>';
+    // Display combinations for each size in variant1 (Size Array)
+    var combinationHtml = `<table>`;
+    combinationHtml += `<tr>`;
+    combinationHtml += `<td colspan="2"><h3>Generated Product Variants for ${productTitle}</h3></td>`;
+    combinationHtml += '</tr>';
 
-        combinationHtml += `<tr>`;
-        combinationHtml += `<td colspan="2">Product Description: ${productDesc}</td>`;
-        combinationHtml += '</tr>';
-        variantCombinations.forEach(combination => {
+    combinationHtml += `<tr>`;
+    combinationHtml += `<td colspan="2">Product Title: ${productTitle}</td>`;
+    combinationHtml += '</tr>';
+
+    combinationHtml += `<tr>`;
+    combinationHtml += `<td colspan="2">Product Description: ${productDesc}</td>`;
+    combinationHtml += '</tr>';
+
+    // Loop through each size in variant1 (Size Array)
+    variant1.forEach(size => {
+        // Filter combinations for the current size
+        let filteredCombinations = filterCombinationsBySize(variantCombinations, 0, size);
+
+        // Add a toggle button and container for the size combinations
+        combinationHtml += `<tr><td colspan="2"><h4 class="toggle-size" style="cursor:pointer;">Size: ${size} (Click to toggle)</h4></td></tr>`;
+        combinationHtml += `<tr class="combination-row"><td colspan="2"><div class="size-combinations" style="display:none;">`; // Container to toggle
+
+        filteredCombinations.forEach(combination => {
             combinationHtml += `<tr>`;
             combinationHtml += `<td>${combination.join(' / ')}</td>`;
             combinationHtml += `<td><input type='text' name='${combination.join('')}' value='' placeholder="price"></td>`;
             combinationHtml += `</tr>`;
         });
-        combinationHtml += `<tr>`;
-        combinationHtml += `<td><button type="button" id="save_product_btn" class="btn btn-info save_product_btn">Save Product</button></td>`;
-        combinationHtml += `</tr>`;
-        //combinationHtml += '</table>';
-        combinationHtml += '</table>';
-        $('#product-variant-combinations-inner').html(combinationHtml);
+
+        combinationHtml += `</div></td></tr>`; // Close the toggle container
     });
 
-    function extractTagTexts(tagId) {
+    combinationHtml += `<tr>`;
+    combinationHtml += `<td><button type="button" id="save_product_btn" class="btn btn-info save_product_btn">Save Product</button></td>`;
+    combinationHtml += `</tr>`;
+    combinationHtml += '</table>';
 
-        // Select the container element
-        const container = document.getElementById(tagId);
+    $('#product-variant-combinations-inner').html(combinationHtml);
 
-        // Check if the container exists and has any tags
-        if (container) {
+
+});
+    // Add toggle functionality for size headings
+    $(document).on('click', '.toggle-size', function() {
+        console.log('clicked');
+        // Find the corresponding .size-combinations div for the clicked size
+        $(this).closest('tr').next('tr').find('.size-combinations').slideToggle();
+    });
+function extractTagTexts(tagId) {
+    // Select the container element
+    const container = document.getElementById(tagId);
+
+    // Check if the container exists and has any tags
+    if (container) {
         const tags = container.querySelectorAll('.tag');
         
         // If tags are found, process them
@@ -325,18 +351,18 @@ $(document).ready(function() {
             
             // Loop through each tag and get the text content (excluding the "x" span)
             tags.forEach(tag => {
-            const tagText = tag.textContent.replace('x', '').trim();
-            tagTexts.push(tagText);
+                const tagText = tag.textContent.replace('x', '').trim();
+                tagTexts.push(tagText);
             });
             
-            //console.log(tagTexts); // Output: array of tag texts
             return tagTexts;
         } else {
             console.log('No tags found.');
         }
-        } else {
-            console.log('Container not found or empty.');
-        }
+    } else {
+        console.log('Container not found or empty.');
     }
+}
 });
+
 </script>
