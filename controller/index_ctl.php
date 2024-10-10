@@ -62,6 +62,9 @@ class index_ctl extends index_mdl
 			} else if ($action == 'add_new_shop_install_token_post') {
 				$this->add_new_shop_install_token_post();
 				exit;
+			}else if ($action == 'add_product') {
+				$this->add_product();
+				exit;
 			} else if ($action == 'delete_shop_install_token_post') {
 				$this->delete_shop_install_token_post();
 				exit;
@@ -828,7 +831,37 @@ class index_ctl extends index_mdl
 		header('Location: index.php?do=sub_option');
 		exit;
 	}
+	public function add_product() {
+		// Get product data from POST
+		$productData = $_POST['productData'];
 
+		// Accessing and echoing product information
+		echo "Shop ID: " . $productData['pro_shop'] . "<br>";
+		echo "Title: " . $productData['pro_title'] . "<br>";
+		echo "Description: " . $productData['pro_desc'] . "<br>";
+		echo "Status: " . $productData['pro_status'] . "<br>";
+		echo "Type: " . $productData['pro_type'] . "<br>";
+		echo "Vendor: " . $productData['pro_vendor'] . "<br>";
+
+		// Accessing tags (assuming they are an array)
+		if (!empty($productData['pro_tag'])) {
+			foreach ($productData['pro_tag'] as $tag) {
+				echo "Tag: " . $tag . "<br>";
+			}
+		}
+
+		// Accessing variants and their combinations
+		if (!empty($productData['variants'])) {
+			foreach ($productData['variants'] as $index => $variant) {
+				echo "Variant Combination " . ($index + 1) . ": " . $variant['combination'] . "<br>";
+				
+				// If there is a price for this variant, echo it as well
+				if (isset($variant['price'])) {
+					echo "Variant Price " . ($index + 1) . ": " . $variant['price'] . "<br>";
+				}
+			}
+		}
+	}
 
 	public function add_new_shop_install_token_post()
 	{

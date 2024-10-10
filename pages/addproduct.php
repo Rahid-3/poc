@@ -45,6 +45,15 @@
                         </div>
                      </div>
                      <div class="form-group row">
+                        <label for="pro_status" class="col-sm-2 col-form-label">Status</label>
+                        <div class="col-sm-10">
+                           <select class="form-control" name="pro_status" id="pro_status">
+                                <option value="Draft">Draft</option>
+                                <option value="Active">Active</option>
+                           </select>
+                        </div>
+                     </div>
+                     <div class="form-group row">
                         <label for="pro_type" class="col-sm-2 col-form-label">Product Type</label>
                         <div class="col-sm-10">
                            <input type="text" class="form-control" name="pro_type" id="pro_type" placeholder="Product Type">
@@ -312,6 +321,7 @@ tagsInputs.addEventListener('keydown', (event) => {
    $(document).on('click', '#add_product_btn', function() {
        var productTitle = $('#pro_title').val();
        var productDesc = $('#pro_desc').val();
+       var productStatus = $('#pro_status').val();
        var productType = $('#pro_type').val();
        var productVender = $('#pro_vendor').val();
        var tgs = extractTagTexts('tagsContainers', '.tagpro') || [];
@@ -332,30 +342,34 @@ tagsInputs.addEventListener('keydown', (event) => {
        var variantCombinations = generateCombinations(allVariants);
    
        // Display combinations even if size is not provided
-       var combinationHtml = `<table>`;
+       var combinationHtml = `<table class="table table-borderless">`;
        combinationHtml += `<tr>`;
        combinationHtml += `<td colspan="2"><h3>Generated Product Variants for ${productTitle}</h3></td>`;
        combinationHtml += '</tr>';
    
        combinationHtml += `<tr>`;
-       combinationHtml += `<td colspan="2">Product Title: ${productTitle}</td>`;
+       combinationHtml += `<td colspan="2"><input type="hidden" name="product_title" value="${productTitle}"/>Product Title: ${productTitle}</td>`;
        combinationHtml += '</tr>';
    
        combinationHtml += `<tr>`;
-       combinationHtml += `<td colspan="2">Product Description: ${productDesc}</td>`;
+       combinationHtml += `<td colspan="2"><input type="hidden" name="product_desc" value="${productDesc}"/>Product Description: ${productDesc}</td>`;
        combinationHtml += `</tr>`;
 
        combinationHtml += `<tr>`;
-       combinationHtml += `<td colspan="2">Product Type: ${productType}</td>`;
+       combinationHtml += `<td colspan="2"><input type="hidden" name="product_status" value="${productStatus}"/>Product Status: ${productStatus}</td>`;
        combinationHtml += `</tr>`;
 
        combinationHtml += `<tr>`;
-       combinationHtml += `<td colspan="2">Product Vender: ${productVender}</td>`;
+       combinationHtml += `<td colspan="2"><input type="hidden" name="product_type" value="${productType}"/>Product Type: ${productType}</td>`;
+       combinationHtml += `</tr>`;
+
+       combinationHtml += `<tr>`;
+       combinationHtml += `<td colspan="2"><input type="hidden" name="product_vendor" value="${productVender}"/>Product Vender: ${productVender}</td>`;
        combinationHtml += `</tr>`;
 
        if (tgs.length > 0) {
            combinationHtml += `<tr>`;
-           combinationHtml += `<td colspan="2">Tags: ${tgs.join(', ')}</td>`;
+           combinationHtml += `<td colspan="2"><input type="hidden" name="product_tgs" value="${tgs.join(', ')}"/>Tags: ${tgs.join(', ')}</td>`;
            combinationHtml += `</tr>`;
        }
    
@@ -367,14 +381,14 @@ tagsInputs.addEventListener('keydown', (event) => {
                let filteredCombinations = filterCombinationsBySize(variantCombinations, 0, size);
    
                // Add a toggle button and container for the size combinations
-               combinationHtml += `<tr><td colspan="2"><h4 class="toggle-size" style="cursor:pointer;">Size: ${size} (Click to toggle)</h4></td></tr>`;
-               combinationHtml += `<tr class="combination-row"><td colspan="2"><div class="size-combinations" style="display:none;">`; // Container to toggle
+               combinationHtml += `<tr><td colspan="2"><h4 class="toggle-size" style="cursor:pointer;">Size: ${size} Click to Exapand all/Collapse all)</h4></td></tr>`;
+               combinationHtml += `<tr class="combination-row"><td colspan="2" style="border:none;"><div class="size-combinations" style="display:none;">`; // Container to toggle
    
                filteredCombinations.forEach(combination => {
-                   combinationHtml += `<div>`;
-                   combinationHtml += `<span>${combination.join(' / ')}</span>`;
-                   combinationHtml += `<input type='text' name='${combination.join('')}' value='' placeholder="price">`;
-                   combinationHtml += `</div>`;
+                   combinationHtml += `<div class="row"><div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">`;
+                   combinationHtml += `<div class="form-group row"><div class="col-sm-2 col-form-label"><span><input type="hidden" name="${combination.join(' / ')}" value="${combination.join(' / ')}">${combination.join(' / ')}</span></div>`;
+                   combinationHtml += `<div class="col-sm-10"><input type='text' name='${combination.join('')}-price' value='' placeholder="price"></div></div>`;
+                   combinationHtml += `</div></div>`;
                });
    
                combinationHtml += `</div></td></tr>`; // Close the toggle container
@@ -383,8 +397,8 @@ tagsInputs.addEventListener('keydown', (event) => {
            // If no sizes are added, just display the combinations without size headings
            variantCombinations.forEach(combination => {
                combinationHtml += `<tr>`;
-               combinationHtml += `<td>${combination.join(' / ')}</td>`;
-               combinationHtml += `<td><input type='text' name='${combination.join('')}' value='' placeholder="price"></td>`;
+               combinationHtml += `<td><input type="hidden" name="${combination.join(' / ')}" value="${combination.join(' / ')}">${combination.join(' / ')}</td>`;
+               combinationHtml += `<td><input type='text' name='${combination.join('')}-price' value='' placeholder="price"></td>`;
                combinationHtml += `</tr>`;
            });
        }
@@ -404,7 +418,9 @@ tagsInputs.addEventListener('keydown', (event) => {
        $(this).closest('tr').next('tr').find('.size-combinations').slideToggle();
    });
    
-   function extractTagTexts(tagId, tg) {
+
+});
+function extractTagTexts(tagId, tg) {
        // Select the container element
        const container = document.getElementById(tagId);
    
@@ -433,6 +449,50 @@ tagsInputs.addEventListener('keydown', (event) => {
            return [];
        }
    }
+</script>
+<script>
+$(document).ready(function() {
+    $(document).on('click', '#save_product_btn', function() {
+    // Gather all product and variant data
+    var productData = {
+        pro_shop: $('#pro_shop').val(),
+        pro_title: $('#pro_title').val(),
+        pro_desc: $('#pro_desc').val(),
+        pro_status: $('#pro_status').val(),
+        pro_type: $('#pro_type').val(),
+        pro_vendor: $('#pro_vendor').val(),
+        pro_tag: extractTagTexts('tagsContainers', '.tagpro') || []
+    };
+
+    // Gather variant combinations and their prices
+    var variantCombinations = [];
+    $('#product-variant-combinations-inner').find('input[type="hidden"]').each(function() {
+        var variantCombination = $(this).val();
+        var price = $(this).closest('tr').find('input[type="text"]').val();
+        variantCombinations.push({ combination: variantCombination, price: price });
+    });
+
+    productData.variants = variantCombinations;
+
+    // Send data to the server via AJAX
+    $.ajax({
+        url: 'index.php',
+        type: 'POST',
+        //data: productData,
+        data:{
+            'action': 'add_product',
+            'productData': productData
+        },
+        success: function(response) {
+            // Redirect to index.php after successful save
+            //window.location.href = "index.php";
+        },
+        error: function(xhr, status, error) {
+            alert('Error saving product: ' + error);
+        }
+    });
 });
 
+});
 </script>
+
