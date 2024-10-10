@@ -65,7 +65,10 @@ class index_ctl extends index_mdl
 			}else if ($action == 'add_product') {
 				$this->add_product();
 				exit;
-			} else if ($action == 'delete_shop_install_token_post') {
+			}else if ($action == 'get_product_shop') {
+				$this->get_product_shop();
+				exit;
+			}else if ($action == 'delete_shop_install_token_post') {
 				$this->delete_shop_install_token_post();
 				exit;
 			} else if ($action == 'delete_main_option') {
@@ -831,6 +834,28 @@ class index_ctl extends index_mdl
 		header('Location: index.php?do=sub_option');
 		exit;
 	}
+
+	public function get_product_shop(){
+		
+		$sql = "SELECT id, shop, install_token FROM `shop_install_token`";
+        $all_list = parent::selectTable_f_mdl($sql);
+        // Include the view (page)
+        //include('./pages/addproduct.php');  // Pass the $shops to the view
+        if (!empty($all_list)) {
+         $html = '';
+         $html .= '<select class="form-control" name="pro_shop" id="pro_shop">';
+         $html .= '<option value="">Select Shop</option>';
+         foreach($all_list as $key => $value){
+             $html .= '<option value="'.$value['id'].'">'.$value['shop'].'</option>';
+         }
+         $html .= '</select>';
+         $res['DATA'] = $html;       
+         echo json_encode($html);
+      
+        }else{
+         echo json_encode(['status'=>'error']);
+        }
+	}
 	public function add_product() {
 		// Get product data from POST
 		$productData = $_POST['productData'];
@@ -842,15 +867,20 @@ class index_ctl extends index_mdl
 		echo "Status: " . $productData['pro_status'] . "<br>";
 		echo "Type: " . $productData['pro_type'] . "<br>";
 		echo "Vendor: " . $productData['pro_vendor'] . "<br>";
+		echo "Tags: " . implode(', ', $productData['pro_tag']) . "<br>";
 
-		// Accessing tags (assuming they are an array)
+		echo "Product Variant Option 1: " . $productData['pro_varopt1'] . "<br>";
+		echo "Product Variant Option 2: " . $productData['pro_varopt2'] . "<br>";
+		echo "Product Variant Option 3: " . $productData['pro_varopt3'] . "<br>";
+
+		// // Accessing tags (assuming they are an array)
 		if (!empty($productData['pro_tag'])) {
 			foreach ($productData['pro_tag'] as $tag) {
 				echo "Tag: " . $tag . "<br>";
 			}
 		}
 
-		// Accessing variants and their combinations
+		// // Accessing variants and their combinations
 		if (!empty($productData['variants'])) {
 			foreach ($productData['variants'] as $index => $variant) {
 				echo "Variant Combination " . ($index + 1) . ": " . $variant['combination'] . "<br>";

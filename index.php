@@ -48,7 +48,7 @@ $site_log_objIndex = new site_log_ctl();
 
 include 'controller/index_ctl.php';
 $objIndex = new index_ctl();
-
+//$objIndex->get_product_shop();
 // include 'controller/rb_index_ctl.php';
 // $rb_objIndex = new rb_index_ctl();
 

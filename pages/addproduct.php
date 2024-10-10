@@ -23,14 +23,7 @@
                   <div class="card-body">
                      <div class="form-group row">
                         <label for="pro_shop" class="col-sm-2 col-form-label">Shop</label>
-                        <div class="col-sm-10">
-                           <select class="form-control" name="pro_shop" id="pro_shop">
-                              <option value="">Select Shop</option>
-                              <option value="Shop 1">Shop 1</option>
-                              <option value="Shop 2">Shop 2</option>
-                              <option value="Shop 3">Shop 3</option>
-                           </select>
-                        </div>
+                        <div class="col-sm-10" id="allshoplist"></div>
                      </div>
                      <div class="form-group row">
                         <label for="pro_title" class="col-sm-2 col-form-label">Product Title</label>
@@ -319,11 +312,16 @@ tagsInputs.addEventListener('keydown', (event) => {
    
    // Handle Add Product Button
    $(document).on('click', '#add_product_btn', function() {
+       var productShop = $('#pro_shop').val();
        var productTitle = $('#pro_title').val();
        var productDesc = $('#pro_desc').val();
        var productStatus = $('#pro_status').val();
        var productType = $('#pro_type').val();
        var productVender = $('#pro_vendor').val();
+       var productVarOpt1 = $('#pro_nm_opt1').val();
+       var productVarOpt2 = $('#pro_nm_opt2').val();
+       var productVarOpt3 = $('#pro_nm_opt3').val();
+
        var tgs = extractTagTexts('tagsContainers', '.tagpro') || [];
        console.log("This is the TAG: " + tgs);
    
@@ -344,11 +342,15 @@ tagsInputs.addEventListener('keydown', (event) => {
        // Display combinations even if size is not provided
        var combinationHtml = `<table class="table table-borderless">`;
        combinationHtml += `<tr>`;
-       combinationHtml += `<td colspan="2"><h3>Generated Product Variants for ${productTitle}</h3></td>`;
+       combinationHtml += `<td colspan="2"><h3>Generated Product Variants for ${productShop}</h3></td>`;
        combinationHtml += '</tr>';
    
        combinationHtml += `<tr>`;
        combinationHtml += `<td colspan="2"><input type="hidden" name="product_title" value="${productTitle}"/>Product Title: ${productTitle}</td>`;
+       combinationHtml += '</tr>';
+
+       combinationHtml += `<tr>`;
+       combinationHtml += `<td colspan="2"><input type="hidden" name="product_Shop" value="${productShop}"/>Shop: ${productShop}</td>`;
        combinationHtml += '</tr>';
    
        combinationHtml += `<tr>`;
@@ -371,6 +373,24 @@ tagsInputs.addEventListener('keydown', (event) => {
            combinationHtml += `<tr>`;
            combinationHtml += `<td colspan="2"><input type="hidden" name="product_tgs" value="${tgs.join(', ')}"/>Tags: ${tgs.join(', ')}</td>`;
            combinationHtml += `</tr>`;
+       }
+
+       if(productVarOpt1 != ""){
+       combinationHtml += `<tr>`;
+       combinationHtml += `<td colspan="2"><input type="hidden" name="product_VarOpt1" value="${productVarOpt1}"/>Product Option: ${productVarOpt1}</td>`;
+       combinationHtml += `</tr>`;
+       }
+
+       if(productVarOpt2 != ""){
+       combinationHtml += `<tr>`;
+       combinationHtml += `<td colspan="2"><input type="hidden" name="product_VarOpt2" value="${productVarOpt2}"/>Product Option: ${productVarOpt2}</td>`;
+       combinationHtml += `</tr>`;
+       }
+
+       if(productVarOpt3 != ""){
+       combinationHtml += `<tr>`;
+       combinationHtml += `<td colspan="2"><input type="hidden" name="product_VarOpt3" value="${productVarOpt3}"/>Product Option: ${productVarOpt3}</td>`;
+       combinationHtml += `</tr>`;
        }
    
    
@@ -461,7 +481,10 @@ $(document).ready(function() {
         pro_status: $('#pro_status').val(),
         pro_type: $('#pro_type').val(),
         pro_vendor: $('#pro_vendor').val(),
-        pro_tag: extractTagTexts('tagsContainers', '.tagpro') || []
+        pro_tag: extractTagTexts('tagsContainers', '.tagpro') || [],
+        pro_varopt1: $('#pro_nm_opt1').val(),
+        pro_varopt2: $('#pro_nm_opt2').val(),
+        pro_varopt3: $('#pro_nm_opt3').val()
     };
 
     // Gather variant combinations and their prices
@@ -495,4 +518,29 @@ $(document).ready(function() {
 
 });
 </script>
+<script>
+    $(document).ready(function() {
+        getProductList();
+    });
 
+    function getProductList(){
+        $.ajax({
+            url: 'index.php',
+            method: 'GET',
+            data: {
+                'action': 'get_product_shop'
+            },
+            success: function(result) {
+                let obj = JSON.parse(result);
+                console.log(obj);
+                $("#allshoplist").html(obj);
+                //Find Last ID
+                if(result.length > 0){
+                    
+                }
+                // End Find Last ID
+            }
+        });
+    }
+
+</script>

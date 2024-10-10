@@ -23,6 +23,7 @@ class common{
         // $this->moduleList[] = ["module_title" => "sub option", "module_shortcode"=>"sub_option"];
         // End Comment by R Dev
         $this->moduleList[] = ["module_title" => "product", "module_shortcode"=>"product"];
+        $this->moduleList[] = ["module_title" => "addproduct", "module_shortcode"=>"addproduct"];
 
     }
 }

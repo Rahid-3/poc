@@ -28,11 +28,15 @@
                 <div class="inex_overlay" id="inex_overlay">
                     <i class="inex_overlay_loader fas fa-2x fa-sync-alt fa-spin"></i>
                 </div>
-                <div>
-                    <input type="hidden" id="action" value="get_product_info_list_post">
-                </div>
+                
+
                 <div class="row">
                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <div class="row">
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3 mb-3">
+                            <div id="master_div_paginations"></div>
+                        </div>
+                    </div>
                         <div id="master_div_product">
                             <!-- Placeholder for the product form -->
                             <table class="table table-bordered table-hover">
@@ -77,8 +81,43 @@ $(document).ready(function() {
         // Add product form display logic
         $("#add_new_btn").click(function() {
         var newUrl = "index.php?do=addproduct";
+        // $.ajax({
+        //     url:'index.php',
+        //     method:'GET',
+        //     data:{'action':'get_product_shop'},
+        //     success: function (result) {
+        //         //var obj = JSON.parse(result);
+        //         window.location.href = newUrl;
+        //     }
+        // });
         window.location.href = newUrl;
     });
 });
+</script>
+<script>
+    $(document).ready(function() {
+        getProductList();
+    });
+
+    function getProductList(){
+        $.ajax({
+            url: 'index.php',
+            method: 'GET',
+            data: {
+                'action': 'get_product_shop'
+            },
+            success: function(result) {
+                let obj = JSON.parse(result);
+                console.log(obj);
+                $("#master_div_paginations").html(obj);
+                //Find Last ID
+                if(result.length > 0){
+                    
+                }
+                // End Find Last ID
+            }
+        });
+    }
+
 </script>
 
