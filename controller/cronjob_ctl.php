@@ -1,38 +1,13 @@
 <?php
-include_once 'model/index_mdl.php';
+include_once 'model/cronjob_mdl.php';
 
-class index_ctl extends index_mdl
+class cronjob_ctl extends cronjob_mdl
 {
 	private static $site_log;
 
 	function __construct()
 	{
-		global $site_log_objIndex;
-		self::$site_log = $site_log_objIndex;
-
-		//first we check user login or not, otherwise redirect to login page
-		global $user_data;
-		if (isset($_SESSION['login_user_id']) && !empty($_SESSION['login_user_id'])) {
-			$user_data = $this->check_user_by_id($_SESSION['login_user_id']);
-			if (isset($_REQUEST['do']) && !empty($_REQUEST['do']) && !in_array($_REQUEST['do'], ['dashboard', 'profile']) && !checkUserPermission($_REQUEST['do'], 'link')) {
-				header('location:index.php?do=dashboard');
-				exit;
-			}
-		} else {
-			//below code is set query param in redirect-url. $_SERVER['QUERY_STRING'] is not working due to some reason.
-			$qs = '';
-			if (isset($_GET) && !empty($_GET)) {
-				foreach ($_GET as $k => $v) {
-					$qs .= $k . '=' . $v . '&';
-				}
-			}
-			$qs = trim($qs, '&');
-
-			$_SESSION['REDIRECT_URL'] = 'https://' . $_SERVER['SERVER_NAME'] . $_SERVER['SCRIPT_NAME'] . ($qs != '' ? '?' . $qs : '');
-
-			header('location:login.php');
-			exit;
-		}
+		
 		if (isset($_REQUEST['action'])) {
 			$action = $_REQUEST['action'];
 			if ($action == 'edit_profile_personal_details_post') {
@@ -47,16 +22,16 @@ class index_ctl extends index_mdl
 			} else if ($action == 'get_shop_installation_list_post') {
 				$this->get_shop_installation_list_post();
 				exit;
-			} else if ($action == 'get_main_option') { // get main option Need to check or Delete
+			} else if ($action == 'get_main_option') {
 				$this->get_main_option();
 				exit;
-			} else if ($action == 'add_mainoption') { // get main option Need to check or Delete
+			} else if ($action == 'add_mainoption') {
 				$this->add_mainoption();
 				exit;
-			} else if ($action == 'add_suboption') { // get main option Need to check or Delete
+			} else if ($action == 'add_suboption') {
 				$this->add_suboption();
 				exit;
-			} else if ($action == 'get_sub_option') { // get main option Need to check or Delete
+			} else if ($action == 'get_sub_option') {
 				$this->get_sub_option();
 				exit;
 			} else if ($action == 'add_new_shop_install_token_post') {
@@ -71,54 +46,54 @@ class index_ctl extends index_mdl
 			}else if ($action == 'delete_shop_install_token_post') {
 				$this->delete_shop_install_token_post();
 				exit;
-			} else if ($action == 'delete_main_option') { // get main option Need to check or Delete
+			} else if ($action == 'delete_main_option') {
 				$this->delete_main_option();
 				exit;
-			} else if ($action == 'delete_sub_option') {// get main option Need to check or Delete
+			} else if ($action == 'delete_sub_option') {
 				$this->delete_sub_option();
 				exit;
 			} else if ($action == 'edit_shop_install_token_post') {
 				$this->edit_shop_install_token_post();
 				exit;
-			} else if ($action == 'edit_mainoption') {// get main option Need to check or Delete
+			} else if ($action == 'edit_mainoption') {
 				$this->edit_mainoption();
 				exit;
-			} else if ($action == 'edit_sub_option') {// get main option Need to check or Delete
+			} else if ($action == 'edit_sub_option') {
 				$this->edit_sub_option();
 				exit;
-			} else if ($action == 'get_page_permission_list_post') { // get main option Need to check or Delete
+			} else if ($action == 'get_page_permission_list_post') {
 				$this->get_page_permission_list_post();
 				exit;
-			} else if ($action == 'change_permission_status') {// get main option Need to check or Delete
+			} else if ($action == 'change_permission_status') {
 				$this->change_permission_status();
 				exit;
-			} else if ($action == 'edit_shop_app_labels_post') { // get main option Need to check or Delete
+			} else if ($action == 'edit_shop_app_labels_post') {
 				$this->edit_shop_app_labels_post();
 				exit;
-			} else if ($action == 'edit_shop_details') {// get main option Need to check or Delete
+			} else if ($action == 'edit_shop_details') {
 				$this->edit_shop_details();
 				exit;
-			} else if ($action == 'get_language_list_post') {// get main option Need to check or Delete
+			} else if ($action == 'get_language_list_post') {
 				$this->get_language_list_post();
 				exit;
-			} else if ($action == 'change_language_status') {// get main option Need to check or Delete
+			} else if ($action == 'change_language_status') {
 				$this->change_language_status();
 				exit;
-			} else if ($action == 'add_new_language_post') {// get main option Need to check or Delete
+			} else if ($action == 'add_new_language_post') {
 				$this->add_new_language_post();
 				exit;
-			} else if ($action == 'get_label_list_post') {// get main option Need to check or Delete
+			} else if ($action == 'get_label_list_post') {
 				$this->get_label_list_post();
 				exit;
-			} else if ($action == 'language_label_text_post') {// get main option Need to check or Delete
+			} else if ($action == 'language_label_text_post') {
 				$this->language_label_text_post();
 				exit;
 			}
 			 else if ($action == 'get_admin_list_post') {
 				$this->get_admin_list_post();
-			} else if ($action == 'get_module_list_post') {// get main option Need to check or Delete
+			} else if ($action == 'get_module_list_post') {
 				$this->get_module_list_post();
-			} else if ($action == "update_permission") {// get main option Need to check or Delete
+			} else if ($action == "update_permission") {
 				$this->update_permission();
 			} else if ($action == 'add_admin_post') {
 				$this->add_admin_post();

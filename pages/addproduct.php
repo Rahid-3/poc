@@ -68,7 +68,7 @@
                      <div class="form-group row" id="alert" style="color:red;display:none;font-size:16px;font-weight:bold;margin-bottom: 3px;">
                         <div class="col-sm-2"></div>
                         <div class="col-sm-10">
-                           <div id="alert1">The limit is 100 product variant combinations. You cannot add more tags.</div>
+                           <div id="alert1">The limit is 2000 product variant combinations. You cannot add more tags.</div>
                         </div>
                      </div>
                      <div id="variant-container">
@@ -94,6 +94,10 @@
                            <div class="col-sm-2"></div>
                            <div class="col-sm-10" id="product-variant-combinations-inner"></div>
                         </div>
+                        <!-- <div class="row">
+                           <div class="col-sm-2"></div>
+                           <div class="col-sm-10" id="product-variant-combinations-inner1"></div>
+                        </div> -->
                      </div>
                   </div>
                </div>
@@ -157,7 +161,7 @@ tagsInputs.addEventListener('keydown', (event) => {
    $(document).ready(function() {
        let variantCount = 0;
        let tagCounts = {}; // Store the count of tags per variant
-   
+    let limitCount = 2000;
        // Close form and redirect
        $(document).on('click', '#close_form', function() {
            var newUrl = "index.php?do=product";
@@ -226,7 +230,7 @@ tagsInputs.addEventListener('keydown', (event) => {
            tagCounts[variantId] = count;
            const totalProductVariants = calculateTotalProductVariants();
    
-           if (totalProductVariants > 100) {
+           if (totalProductVariants > limitCount) {
                disableTagInputs();
            } else {
                enableTagInputs();
@@ -251,8 +255,8 @@ tagsInputs.addEventListener('keydown', (event) => {
    
        function checkTagLimit() {
            const totalProductVariants = calculateTotalProductVariants();
-           if (totalProductVariants >= 100) {
-               alert('The limit is 100 product variant combinations. You cannot add more tags.');
+           if (totalProductVariants >= limitCount) {
+               alert('The limit is 2000 product variant combinations. You cannot add more tags.');
                disableTagInputs();
                return false;
            }
@@ -406,8 +410,8 @@ tagsInputs.addEventListener('keydown', (event) => {
    
                filteredCombinations.forEach(combination => {
                    combinationHtml += `<div class="row"><div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">`;
-                   combinationHtml += `<div class="form-group row"><div class="col-sm-2 col-form-label"><span><input type="hidden" name="${combination.join(' / ')}" value="${combination.join(' / ')}">${combination.join(' / ')}</span></div>`;
-                   combinationHtml += `<div class="col-sm-10"><input type='text' name='${combination.join('')}-price' value='' placeholder="price"></div></div>`;
+                   combinationHtml += `<div class="form-group row"><div class="col-sm-2 col-form-label"><span><input type="hidden" name="variat-title[]" value="${combination.join(' / ')}">${combination.join(' / ')}</span></div>`;
+                   combinationHtml += `<div class="col-sm-10"><input type='text' name='variat-price[]' value='' placeholder="price"></div></div>`;
                    combinationHtml += `</div></div>`;
                });
    
@@ -417,8 +421,8 @@ tagsInputs.addEventListener('keydown', (event) => {
            // If no sizes are added, just display the combinations without size headings
            variantCombinations.forEach(combination => {
                combinationHtml += `<tr>`;
-               combinationHtml += `<td><input type="hidden" name="${combination.join(' / ')}" value="${combination.join(' / ')}">${combination.join(' / ')}</td>`;
-               combinationHtml += `<td><input type='text' name='${combination.join('')}-price' value='' placeholder="price"></td>`;
+               combinationHtml += `<td><input type="hidden" name="variat-title[]" value="${combination.join(' / ')}">${combination.join(' / ')}</td>`;
+               combinationHtml += `<td><input type='text' name='variat-price[]' value='' placeholder="price"></td>`;
                combinationHtml += `</tr>`;
            });
        }
@@ -429,6 +433,7 @@ tagsInputs.addEventListener('keydown', (event) => {
        combinationHtml += '</table>';
    
        $('#product-variant-combinations-inner').html(combinationHtml);
+       //$('#product-variant-combinations-inner1').html(combinationHtml);
    });
    
    // Add toggle functionality for size headings
@@ -496,24 +501,26 @@ $(document).ready(function() {
     });
 
     productData.variants = variantCombinations;
+    console.log(productData);
 
     // Send data to the server via AJAX
-    $.ajax({
-        url: 'index.php',
-        type: 'POST',
-        //data: productData,
-        data:{
-            'action': 'add_product',
-            'productData': productData
-        },
-        success: function(response) {
-            // Redirect to index.php after successful save
-            //window.location.href = "index.php";
-        },
-        error: function(xhr, status, error) {
-            alert('Error saving product: ' + error);
-        }
-    });
+    // Send data to the server via AJAX
+//     $.ajax({
+//         url: 'index.php',
+//         type: 'POST',
+//         //data: productData,
+//         data:{
+//             'action': 'add_product',
+//             'productData': productData
+//         },
+//         success: function(response) {
+//             // Redirect to index.php after successful save
+//             //window.location.href = "index.php";
+//         },
+//         error: function(xhr, status, error) {
+//             alert('Error saving product: ' + error);
+//         }
+//     });
 });
 
 });
@@ -532,7 +539,7 @@ $(document).ready(function() {
             },
             success: function(result) {
                 let obj = JSON.parse(result);
-                console.log(obj);
+                //console.log(obj);
                 $("#allshoplist").html(obj);
                 //Find Last ID
                 if(result.length > 0){
