@@ -289,7 +289,7 @@ tagsInputs.addEventListener('keydown', (event) => {
        });
    
        // Initialize first variant tag input
-       initTagInput('tag-input1', 'tags-input-container1', 1);
+       //initTagInput('tag-input1', 'tags-input-container1', 1);
    });
 </script>
 <script>
@@ -328,12 +328,12 @@ tagsInputs.addEventListener('keydown', (event) => {
 
        var tgs = extractTagTexts('tagsContainers', '.tagpro') || [];
        console.log("This is the TAG: " + tgs);
-   
+
        // Generate variant combinations
        var variant1 = extractTagTexts('tags-input-container1', '.tag') || []; // Sizes (e.g., M, L, S, XL)
        var variant2 = extractTagTexts('tags-input-container2', '.tag') || []; // Colors
        var variant3 = extractTagTexts('tags-input-container3', '.tag') || []; // Materials or any other variant
-   
+
        console.log("This is the Array of the Size: " + variant1);
    
        // Filter out undefined or empty arrays (arrays with length 0)
@@ -344,57 +344,61 @@ tagsInputs.addEventListener('keydown', (event) => {
        var variantCombinations = generateCombinations(allVariants);
    
        // Display combinations even if size is not provided
-       var combinationHtml = `<table class="table table-borderless">`;
-       combinationHtml += `<tr>`;
-       combinationHtml += `<td colspan="2"><h3>Generated Product Variants for ${productShop}</h3></td>`;
-       combinationHtml += '</tr>';
+        var combinationHtml = `<form class="form-horizontal" method="post" action="index.php" enctype="multipart/form-data"><table class="table table-borderless"><input type="hidden" name="action" value="add_product">`;
+        combinationHtml += `<tr>`;
+        combinationHtml += `<td colspan="2"><h3>Generated Product Variants for ${productShop}</h3></td>`;
+        combinationHtml += '</tr>';
+
+        combinationHtml += `<tr>`;
+        combinationHtml += `<td colspan="2"><input type="hidden" name="product_Shop" value="${productShop}"/>Shop: ${productShop}</td>`;
+        combinationHtml += '</tr>';
    
-       combinationHtml += `<tr>`;
-       combinationHtml += `<td colspan="2"><input type="hidden" name="product_title" value="${productTitle}"/>Product Title: ${productTitle}</td>`;
-       combinationHtml += '</tr>';
+        combinationHtml += `<tr>`;
+        combinationHtml += `<td colspan="2"><input type="hidden" name="product_title" value="${productTitle}"/>Product Title: ${productTitle}</td>`;
+        combinationHtml += '</tr>';
 
-       combinationHtml += `<tr>`;
-       combinationHtml += `<td colspan="2"><input type="hidden" name="product_Shop" value="${productShop}"/>Shop: ${productShop}</td>`;
-       combinationHtml += '</tr>';
-   
-       combinationHtml += `<tr>`;
-       combinationHtml += `<td colspan="2"><input type="hidden" name="product_desc" value="${productDesc}"/>Product Description: ${productDesc}</td>`;
-       combinationHtml += `</tr>`;
-
-       combinationHtml += `<tr>`;
-       combinationHtml += `<td colspan="2"><input type="hidden" name="product_status" value="${productStatus}"/>Product Status: ${productStatus}</td>`;
-       combinationHtml += `</tr>`;
-
-       combinationHtml += `<tr>`;
-       combinationHtml += `<td colspan="2"><input type="hidden" name="product_type" value="${productType}"/>Product Type: ${productType}</td>`;
-       combinationHtml += `</tr>`;
-
-       combinationHtml += `<tr>`;
-       combinationHtml += `<td colspan="2"><input type="hidden" name="product_vendor" value="${productVender}"/>Product Vender: ${productVender}</td>`;
-       combinationHtml += `</tr>`;
-
+        if(productDesc != ""){
+            combinationHtml += `<tr>`;
+            combinationHtml += `<td colspan="2"><input type="hidden" name="product_desc" value="${productDesc}"/>Product Description: ${productDesc}</td>`;
+            combinationHtml += `</tr>`;
+        }
+        if(productStatus != ""){
+            combinationHtml += `<tr>`;
+            combinationHtml += `<td colspan="2"><input type="hidden" name="product_status" value="${productStatus}"/>Product Status: ${productStatus}</td>`;
+            combinationHtml += `</tr>`;
+        }
+        if(productType != ""){
+            combinationHtml += `<tr>`;
+            combinationHtml += `<td colspan="2"><input type="hidden" name="product_type" value="${productType}"/>Product Type: ${productType}</td>`;
+            combinationHtml += `</tr>`;
+        }
+        if(productVender != ""){     
+            combinationHtml += `<tr>`;
+            combinationHtml += `<td colspan="2"><input type="hidden" name="product_vendor" value="${productVender}"/>Product Vender: ${productVender}</td>`;
+            combinationHtml += `</tr>`;
+        }
        if (tgs.length > 0) {
            combinationHtml += `<tr>`;
            combinationHtml += `<td colspan="2"><input type="hidden" name="product_tgs" value="${tgs.join(', ')}"/>Tags: ${tgs.join(', ')}</td>`;
            combinationHtml += `</tr>`;
        }
 
-       if(productVarOpt1 != ""){
-       combinationHtml += `<tr>`;
-       combinationHtml += `<td colspan="2"><input type="hidden" name="product_VarOpt1" value="${productVarOpt1}"/>Product Option: ${productVarOpt1}</td>`;
-       combinationHtml += `</tr>`;
+       if(productVarOpt1 != "" && productVarOpt1 != undefined){
+            combinationHtml += `<tr>`;
+            combinationHtml += `<td colspan="2"><input type="hidden" name="product_VarOpt1" value="${productVarOpt1}"/>Product Option: ${productVarOpt1}</td>`;
+            combinationHtml += `</tr>`;
        }
 
-       if(productVarOpt2 != ""){
-       combinationHtml += `<tr>`;
-       combinationHtml += `<td colspan="2"><input type="hidden" name="product_VarOpt2" value="${productVarOpt2}"/>Product Option: ${productVarOpt2}</td>`;
-       combinationHtml += `</tr>`;
+       if(productVarOpt2 != "" && productVarOpt2 != undefined){
+            combinationHtml += `<tr>`;
+            combinationHtml += `<td colspan="2"><input type="hidden" name="product_VarOpt2" value="${productVarOpt2}"/>Product Option: ${productVarOpt2}</td>`;
+            combinationHtml += `</tr>`;
        }
 
-       if(productVarOpt3 != ""){
-       combinationHtml += `<tr>`;
-       combinationHtml += `<td colspan="2"><input type="hidden" name="product_VarOpt3" value="${productVarOpt3}"/>Product Option: ${productVarOpt3}</td>`;
-       combinationHtml += `</tr>`;
+       if(productVarOpt3 != "" && productVarOpt3 != undefined){
+            combinationHtml += `<tr>`;
+            combinationHtml += `<td colspan="2"><input type="hidden" name="product_VarOpt3" value="${productVarOpt3}"/>Product Option: ${productVarOpt3}</td>`;
+            combinationHtml += `</tr>`;
        }
    
    
@@ -418,6 +422,8 @@ tagsInputs.addEventListener('keydown', (event) => {
                combinationHtml += `</div></td></tr>`; // Close the toggle container
            });
        } else {
+        if(variant2.length > 0 || variant3.length > 0)
+      
            // If no sizes are added, just display the combinations without size headings
            variantCombinations.forEach(combination => {
                combinationHtml += `<tr>`;
@@ -425,12 +431,13 @@ tagsInputs.addEventListener('keydown', (event) => {
                combinationHtml += `<td><input type='text' name='variat-price[]' value='' placeholder="price"></td>`;
                combinationHtml += `</tr>`;
            });
+        
        }
    
        combinationHtml += `<tr>`;
-       combinationHtml += `<td><button type="button" id="save_product_btn" class="btn btn-info save_product_btn">Save Product</button></td>`;
+       combinationHtml += `<td><button type="submit" id="save_product_btn" class="btn btn-info save_product_btn">Save Product</button></td>`;
        combinationHtml += `</tr>`;
-       combinationHtml += '</table>';
+       combinationHtml += '</table></form>';
    
        $('#product-variant-combinations-inner').html(combinationHtml);
        //$('#product-variant-combinations-inner1').html(combinationHtml);
@@ -476,54 +483,23 @@ function extractTagTexts(tagId, tg) {
    }
 </script>
 <script>
-$(document).ready(function() {
-    $(document).on('click', '#save_product_btn', function() {
-    // Gather all product and variant data
-    var productData = {
-        pro_shop: $('#pro_shop').val(),
-        pro_title: $('#pro_title').val(),
-        pro_desc: $('#pro_desc').val(),
-        pro_status: $('#pro_status').val(),
-        pro_type: $('#pro_type').val(),
-        pro_vendor: $('#pro_vendor').val(),
-        pro_tag: extractTagTexts('tagsContainers', '.tagpro') || [],
-        pro_varopt1: $('#pro_nm_opt1').val(),
-        pro_varopt2: $('#pro_nm_opt2').val(),
-        pro_varopt3: $('#pro_nm_opt3').val()
-    };
-
-    // Gather variant combinations and their prices
-    var variantCombinations = [];
-    $('#product-variant-combinations-inner').find('input[type="hidden"]').each(function() {
-        var variantCombination = $(this).val();
-        var price = $(this).closest('tr').find('input[type="text"]').val();
-        variantCombinations.push({ combination: variantCombination, price: price });
-    });
-
-    productData.variants = variantCombinations;
-    console.log(productData);
-
-    // Send data to the server via AJAX
-    // Send data to the server via AJAX
-//     $.ajax({
-//         url: 'index.php',
-//         type: 'POST',
-//         //data: productData,
-//         data:{
-//             'action': 'add_product',
-//             'productData': productData
-//         },
-//         success: function(response) {
-//             // Redirect to index.php after successful save
-//             //window.location.href = "index.php";
-//         },
-//         error: function(xhr, status, error) {
-//             alert('Error saving product: ' + error);
-//         }
+// $(document).ready(function() {
+//     $(document).on('click', '#save_product_btn', function() {
+//         var newUrl = "index.php?do=product";
+//         console.log('clicked');
+//         $.ajax({
+//             url:'index.php',
+//             method: 'POST',
+//             data:{
+//                 'action': 'add_product'
+//             },
+//             success:function(result){
+//                 window.location.href = newUrl; // Redirect to the new URL
+//             }
+//         });
+//         // window.location.href = newUrl; // Redirect to the new URL
 //     });
-});
-
-});
+// });
 </script>
 <script>
     $(document).ready(function() {
@@ -549,5 +525,35 @@ $(document).ready(function() {
             }
         });
     }
+</script>
+<script>
+
+ // Get references to the input field, select dropdown, and the save button
+
+ setTimeout(function() {
+    const inputField = document.getElementById('pro_title');
+    const selectField = document.getElementById('pro_shop');
+    const saveBtn = document.getElementById('add_product_btn');
+
+    // Ensure all elements are correctly fetched before proceeding
+    if (!inputField || !selectField || !saveBtn) {
+        console.error("One or more elements are not found in the DOM. Please check your HTML IDs.");
+        return;
+    }
+
+    // Function to check both input field and select dropdown
+    function toggleSaveButton() {
+        if (inputField.value.trim() !== "" && selectField.value !== "") {
+            saveBtn.disabled = false;
+        } else {
+            saveBtn.disabled = true;
+        }
+    }
+
+    // Add event listeners to both the input field and select dropdown
+    inputField.addEventListener('input', toggleSaveButton);
+    selectField.addEventListener('change', toggleSaveButton);
+
+}, 1000); // Delay the execution by 500ms (half a second)
 
 </script>
