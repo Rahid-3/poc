@@ -1,38 +1,13 @@
 <?php
-include_once 'model/index_mdl.php';
+include_once 'model/cronjob_mdl.php';
 
-class index_ctl extends index_mdl
+class cronjob_ctl extends cronjob_mdl
 {
 	private static $site_log;
 
 	function __construct()
 	{
-		global $site_log_objIndex;
-		self::$site_log = $site_log_objIndex;
-
-		//first we check user login or not, otherwise redirect to login page
-		global $user_data;
-		if (isset($_SESSION['login_user_id']) && !empty($_SESSION['login_user_id'])) {
-			$user_data = $this->check_user_by_id($_SESSION['login_user_id']);
-			if (isset($_REQUEST['do']) && !empty($_REQUEST['do']) && !in_array($_REQUEST['do'], ['dashboard', 'profile']) && !checkUserPermission($_REQUEST['do'], 'link')) {
-				header('location:index.php?do=dashboard');
-				exit;
-			}
-		} else {
-			//below code is set query param in redirect-url. $_SERVER['QUERY_STRING'] is not working due to some reason.
-			$qs = '';
-			if (isset($_GET) && !empty($_GET)) {
-				foreach ($_GET as $k => $v) {
-					$qs .= $k . '=' . $v . '&';
-				}
-			}
-			$qs = trim($qs, '&');
-
-			$_SESSION['REDIRECT_URL'] = 'https://' . $_SERVER['SERVER_NAME'] . $_SERVER['SCRIPT_NAME'] . ($qs != '' ? '?' . $qs : '');
-
-			header('location:login.php');
-			exit;
-		}
+		
 		if (isset($_REQUEST['action'])) {
 			$action = $_REQUEST['action'];
 			if ($action == 'edit_profile_personal_details_post') {
@@ -47,16 +22,16 @@ class index_ctl extends index_mdl
 			} else if ($action == 'get_shop_installation_list_post') {
 				$this->get_shop_installation_list_post();
 				exit;
-			} else if ($action == 'get_main_option') { // get main option Need to check or Delete
+			} else if ($action == 'get_main_option') {
 				$this->get_main_option();
 				exit;
-			} else if ($action == 'add_mainoption') { // get main option Need to check or Delete
+			} else if ($action == 'add_mainoption') {
 				$this->add_mainoption();
 				exit;
-			} else if ($action == 'add_suboption') { // get main option Need to check or Delete
+			} else if ($action == 'add_suboption') {
 				$this->add_suboption();
 				exit;
-			} else if ($action == 'get_sub_option') { // get main option Need to check or Delete
+			} else if ($action == 'get_sub_option') {
 				$this->get_sub_option();
 				exit;
 			} else if ($action == 'add_new_shop_install_token_post') {
@@ -71,54 +46,54 @@ class index_ctl extends index_mdl
 			}else if ($action == 'delete_shop_install_token_post') {
 				$this->delete_shop_install_token_post();
 				exit;
-			} else if ($action == 'delete_main_option') { // get main option Need to check or Delete
+			} else if ($action == 'delete_main_option') {
 				$this->delete_main_option();
 				exit;
-			} else if ($action == 'delete_sub_option') {// get main option Need to check or Delete
+			} else if ($action == 'delete_sub_option') {
 				$this->delete_sub_option();
 				exit;
 			} else if ($action == 'edit_shop_install_token_post') {
 				$this->edit_shop_install_token_post();
 				exit;
-			} else if ($action == 'edit_mainoption') {// get main option Need to check or Delete
+			} else if ($action == 'edit_mainoption') {
 				$this->edit_mainoption();
 				exit;
-			} else if ($action == 'edit_sub_option') {// get main option Need to check or Delete
+			} else if ($action == 'edit_sub_option') {
 				$this->edit_sub_option();
 				exit;
-			} else if ($action == 'get_page_permission_list_post') { // get main option Need to check or Delete
+			} else if ($action == 'get_page_permission_list_post') {
 				$this->get_page_permission_list_post();
 				exit;
-			} else if ($action == 'change_permission_status') {// get main option Need to check or Delete
+			} else if ($action == 'change_permission_status') {
 				$this->change_permission_status();
 				exit;
-			} else if ($action == 'edit_shop_app_labels_post') { // get main option Need to check or Delete
+			} else if ($action == 'edit_shop_app_labels_post') {
 				$this->edit_shop_app_labels_post();
 				exit;
-			} else if ($action == 'edit_shop_details') {// get main option Need to check or Delete
+			} else if ($action == 'edit_shop_details') {
 				$this->edit_shop_details();
 				exit;
-			} else if ($action == 'get_language_list_post') {// get main option Need to check or Delete
+			} else if ($action == 'get_language_list_post') {
 				$this->get_language_list_post();
 				exit;
-			} else if ($action == 'change_language_status') {// get main option Need to check or Delete
+			} else if ($action == 'change_language_status') {
 				$this->change_language_status();
 				exit;
-			} else if ($action == 'add_new_language_post') {// get main option Need to check or Delete
+			} else if ($action == 'add_new_language_post') {
 				$this->add_new_language_post();
 				exit;
-			} else if ($action == 'get_label_list_post') {// get main option Need to check or Delete
+			} else if ($action == 'get_label_list_post') {
 				$this->get_label_list_post();
 				exit;
-			} else if ($action == 'language_label_text_post') {// get main option Need to check or Delete
+			} else if ($action == 'language_label_text_post') {
 				$this->language_label_text_post();
 				exit;
 			}
 			 else if ($action == 'get_admin_list_post') {
 				$this->get_admin_list_post();
-			} else if ($action == 'get_module_list_post') {// get main option Need to check or Delete
+			} else if ($action == 'get_module_list_post') {
 				$this->get_module_list_post();
-			} else if ($action == "update_permission") {// get main option Need to check or Delete
+			} else if ($action == "update_permission") {
 				$this->update_permission();
 			} else if ($action == 'add_admin_post') {
 				$this->add_admin_post();
@@ -857,81 +832,41 @@ class index_ctl extends index_mdl
         }
 	}
 	public function add_product() {
-		if (isset($_POST['product_Shop']) && !empty($_POST['product_Shop'])) {
-			$product_Shop = trim($_POST['product_Shop']);
-			$product_title = trim($_POST['product_title']);
-			$product_desc = isset($_POST['product_desc']) ? trim($_POST['product_desc']) : "";
-			$product_status = isset($_POST['product_status']) ? trim($_POST['product_status']) : "";
-			$product_type = isset($_POST['product_type']) ? trim($_POST['product_type']) : "";
-			$product_vendor = isset($_POST['product_vendor']) ? trim($_POST['product_vendor']) : "";
-			$product_tgs = isset($_POST['product_tgs']) ? trim($_POST['product_tgs']) : "";
-			$product_option = trim($_POST['product_VarOpt1']) . ',' . trim($_POST['product_VarOpt2']) . ',' . trim($_POST['product_VarOpt3']);
-			$shopify_product_id = ''; // Null as of now
-			$updated_at = date('Y-m-d H:i:s');
-			$created_at = date('Y-m-d H:i:s');
-	
-			$insert_data = [
-				'shop_id' => $product_Shop,
-				'title' => $product_title,
-				'pro_description' => $product_desc,
-				'product_status' => $product_status,
-				'product_type' => $product_type,
-				'option_product' => $product_option,
-				'vendor' => $product_vendor,
-				'tags' => $product_tgs,
-				'shopify_product_id' => $shopify_product_id,
-				'created_at' => $created_at,
-				'updated_at' => $updated_at
-			];
-			var_dump($insert_data);
-			//$product_id = parent::insertTable_f_mdl('products', $insert_data);
-			$product_id_result = parent::insertTable_f_mdl('products', $insert_data); // Inserting the product
+		// Get product data from POST
+		$productData = $_POST['productData'];
 
-			// Ensure only the 'insert_id' is used as product_id
-			$product_id = $product_id_result['insert_id'];
-			var_dump($product_id);
-			if ($product_id) {
-				// Step 2: Insert variant data into the Variant table
-				$variantTitles = $_POST['variat-title'];
-				$variantPrices = $_POST['variat-price'];
+		// Accessing and echoing product information
+		echo "Shop ID: " . $productData['pro_shop'] . "<br>";
+		echo "Title: " . $productData['pro_title'] . "<br>";
+		echo "Description: " . $productData['pro_desc'] . "<br>";
+		echo "Status: " . $productData['pro_status'] . "<br>";
+		echo "Type: " . $productData['pro_type'] . "<br>";
+		echo "Vendor: " . $productData['pro_vendor'] . "<br>";
+		echo "Tags: " . implode(', ', $productData['pro_tag']) . "<br>";
 
-				for ($i = 0; $i < count($variantTitles); $i++) {
-					$variantTitle = is_array($variantTitles[$i]) ? implode(',', $variantTitles[$i]) : trim($variantTitles[$i]);
-					$variantPrice = is_array($variantPrices[$i]) ? implode(',', $variantPrices[$i]) : trim($variantPrices[$i]);
-					$shopify_variant_id = ''; // Null as of now
+		echo "Product Variant Option 1: " . $productData['pro_varopt1'] . "<br>";
+		echo "Product Variant Option 2: " . $productData['pro_varopt2'] . "<br>";
+		echo "Product Variant Option 3: " . $productData['pro_varopt3'] . "<br>";
 
-					$insert_data = [
-						'product_id' => $product_id, // Ensure this is just the insert_id, not an array
-						'title' => $variantTitle,
-						'price' => $variantPrice,
-						'shopify_variant_id' => $shopify_variant_id,
-						'created_at' => $created_at,
-						'updated_at' => $updated_at
-					];
+		// // Accessing tags (assuming they are an array)
+		if (!empty($productData['pro_tag'])) {
+			foreach ($productData['pro_tag'] as $tag) {
+				echo "Tag: " . $tag . "<br>";
+			}
+		}
 
-					var_dump($insert_data); // Debugging data for variants
-					$sqlVariant = parent::insertTable_f_mdl('variants', $insert_data);
-
-					if (!$sqlVariant) {
-						$_SESSION['SUCCESS'] = 'FALSE';
-						$_SESSION['MESSAGE'] = 'Variants Not added. Something went wrong.';
-						break;
-					}
+		// // Accessing variants and their combinations
+		if (!empty($productData['variants'])) {
+			foreach ($productData['variants'] as $index => $variant) {
+				echo "Variant Combination " . ($index + 1) . ": " . $variant['combination'] . "<br>";
+				
+				// If there is a price for this variant, echo it as well
+				if (isset($variant['price'])) {
+					echo "Variant Price " . ($index + 1) . ": " . $variant['price'] . "<br>";
 				}
 			}
-			else {
-				$_SESSION['SUCCESS'] = 'FALSE';
-				$_SESSION['MESSAGE'] = 'Product not added. Please check.';
-			}
-		} else {
-			$_SESSION['SUCCESS'] = 'FALSE';
-			$_SESSION['MESSAGE'] = 'Shop ID is required.';
 		}
-	
-		header('location:index.php?do=product');
-		exit();
 	}
-	
 
 	public function add_new_shop_install_token_post()
 	{
