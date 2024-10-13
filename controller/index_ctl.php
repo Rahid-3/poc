@@ -56,6 +56,9 @@ class index_ctl extends index_mdl
 			}else if ($action == 'get_product_shop') {
 				$this->get_product_shop();
 				exit;
+			}else if ($action == 'get_product_list') {
+				$this->get_product_list();
+				exit;
 			}else if ($action == 'delete_shop_install_token_post') {
 				$this->delete_shop_install_token_post();
 				exit;
@@ -314,6 +317,28 @@ class index_ctl extends index_mdl
 			$res['sr_end'] = $sr_end;
 			echo json_encode($res, 1);
 		}
+	}
+
+	public function get_product_list(){
+		
+		$sql = "SELECT id, shop, install_token FROM `shop_install_token`";
+        $all_list = parent::selectTable_f_mdl($sql);
+        // Include the view (page)
+        //include('./pages/addproduct.php');  // Pass the $shops to the view
+        if (!empty($all_list)) {
+         $html = '';
+         $html .= '<select class="form-control" name="pro_shop" id="pro_shop">';
+         $html .= '<option value="">Select Shop</option>';
+         foreach($all_list as $key => $value){
+             $html .= '<option value="'.$value['id'].'">'.$value['shop'].'</option>';
+         }
+         $html .= '</select>';
+         $res['DATA'] = $html;       
+         echo json_encode($html);
+      
+        }else{
+         echo json_encode(['status'=>'error']);
+        }
 	}
 
 	public function get_product_shop(){

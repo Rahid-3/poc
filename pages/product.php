@@ -50,22 +50,10 @@
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody id="product_list">
                                     <tr>
-                                        <td>1</td>
-                                        <td>Shirt</td>
-                                        <td>VDB</td>
-                                        <td>Active</td>
-                                        <td>Variant</td>
-                                        <td><button type="button" class="btn btn-primary btn-xs edit-student-btn" data-id="17">Edit</button> <button type="button" class="btn btn-danger btn-xs delete-student-btn" data-id="17">Delete</button></td>
-                                    </tr>
-                                    <tr>
-                                        <td>2</td>
-                                        <td>Jeans</td>
-                                        <td>VDB</td>
-                                        <td>Active</td>
-                                        <td>Variant</td>
-                                        <td><button type="button" class="btn btn-primary btn-xs edit-student-btn" data-id="16">Edit</button> <button type="button" class="btn btn-danger btn-xs delete-student-btn" data-id="16">Delete</button></td>
+                                        <td colspan="6" style="text-align:center;font-weight:bold;">Select Store for the Drop Down list</td>
+                                        
                                     </tr>
                                 </tbody>
                                 </table>
@@ -93,13 +81,40 @@ $(document).ready(function() {
         window.location.href = newUrl;
     });
 });
+$(document).on('change', '#pro_shop', function() {
+    //getProductList();
+    console.log("change");
+    var id = $(this).val();
+    console.log(id);
+    getProductList(id);
+});
+function  getProductList(id){
+    $.ajax({
+        url: 'index.php',
+        method: 'GET',
+        data: {
+            'action': 'get_product_list',
+            'id': id
+        },
+        success: function(result) {
+            let obj = JSON.parse(result);
+            console.log(obj);
+            $("#product_list").html(obj);
+            //Find Last ID
+            if(result.length > 0){
+                
+            }
+            // End Find Last ID
+        }
+    });
+}
 </script>
 <script>
     $(document).ready(function() {
-        getProductList();
+        getProductShop();
     });
 
-    function getProductList(){
+    function getProductShop(){
         $.ajax({
             url: 'index.php',
             method: 'GET',
@@ -108,13 +123,8 @@ $(document).ready(function() {
             },
             success: function(result) {
                 let obj = JSON.parse(result);
-                console.log(obj);
+                //console.log(obj);
                 $("#master_div_paginations").html(obj);
-                //Find Last ID
-                if(result.length > 0){
-                    
-                }
-                // End Find Last ID
             }
         });
     }
