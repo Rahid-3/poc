@@ -363,6 +363,7 @@ class index_ctl extends index_mdl
         }
 	}
 	public function add_product() {
+		
 		if (isset($_POST['product_Shop']) && !empty($_POST['product_Shop'])) {
 			$product_Shop = trim($_POST['product_Shop']);
 			$product_title = trim($_POST['product_title']);
@@ -389,13 +390,13 @@ class index_ctl extends index_mdl
 				'created_at' => $created_at,
 				'updated_at' => $updated_at
 			];
-			var_dump($insert_data);
+			//var_dump($insert_data);
 			//$product_id = parent::insertTable_f_mdl('products', $insert_data);
 			$product_id_result = parent::insertTable_f_mdl('products', $insert_data); // Inserting the product
 
 			// Ensure only the 'insert_id' is used as product_id
 			$product_id = $product_id_result['insert_id'];
-			var_dump($product_id);
+			//var_dump($product_id);
 			if ($product_id) {
 				// Step 2: Insert variant data into the Variant table
 				$variantTitles = $_POST['variat-title'];
@@ -415,7 +416,7 @@ class index_ctl extends index_mdl
 						'updated_at' => $updated_at
 					];
 
-					var_dump($insert_data); // Debugging data for variants
+					//var_dump($insert_data); // Debugging data for variants
 					$sqlVariant = parent::insertTable_f_mdl('variants', $insert_data);
 
 					if (!$sqlVariant) {
