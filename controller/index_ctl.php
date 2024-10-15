@@ -363,7 +363,7 @@ class index_ctl extends index_mdl
         }
 	}
 	public function add_product() {
-		
+		/* This working fine
 		if (isset($_POST['product_Shop']) && !empty($_POST['product_Shop'])) {
 			$product_Shop = trim($_POST['product_Shop']);
 			$product_title = trim($_POST['product_title']);
@@ -437,6 +437,142 @@ class index_ctl extends index_mdl
 	
 		header('location:index.php?do=product');
 		exit();
+		*/
+
+		// New logic to create product and options 2k variants
+		if (isset($_POST['product_Shop']) && !empty($_POST['product_Shop'])) {
+			$product_Shop = trim($_POST['product_Shop']);
+			$product_title = trim($_POST['product_title']);
+			$product_desc = isset($_POST['product_desc']) ? trim($_POST['product_desc']) : "";
+			$product_status = isset($_POST['product_status']) ? trim($_POST['product_status']) : "";
+			$product_type = isset($_POST['product_type']) ? trim($_POST['product_type']) : "";
+			$product_vendor = isset($_POST['product_vendor']) ? trim($_POST['product_vendor']) : "";
+			$product_tgs = isset($_POST['product_tgs']) ? trim($_POST['product_tgs']) : "";
+			$product_option1 = trim($_POST['product_VarOpt1']);
+			$product_option2 = trim($_POST['product_VarOpt2']);
+			$product_option3 = trim($_POST['product_VarOpt3']);
+
+			//$product_option = trim($_POST['product_VarOpt1']) . ',' . trim($_POST['product_VarOpt2']) . ',' . trim($_POST['product_VarOpt3']);
+			//$shopify_product_id = ''; // Null as of now
+			$updated_at = date('Y-m-d H:i:s');
+			$created_at = date('Y-m-d H:i:s');
+
+			// Insert Product in to the select Store
+			$sql = "SELECT id, shop, install_token FROM `shop_install_token` WHERE id = '$product_Shop'";
+			//echo $sql;
+			$all_list = parent::selectTable_f_mdl($sql);
+			// Include the view (page)
+			//include('./pages/addproduct.php');  // Pass the $shops to the view
+			if (!empty($all_list)) {
+				foreach($all_list as $key => $value){
+					$myStoreShop = $value['shop'];
+					$myStoreToken = $value['install_token'];
+				}
+			}
+
+
+			// Loop through variant titles and prices
+			$variantPrices = $_POST['variat-price'];
+			$variantTitles = $_POST['variat-title']; // Example: "m/red/mx"
+			$combinations = [];
+			$price = [];
+			$variants = [];
+			$productOptions = [
+				["name" => $product_option1, "values" => []],
+				["name" => $product_option2, "values" => []],
+				["name" => $product_option3, "values" => []]
+			];
+			//$productOptions = [];
+			$productId = "gid://shopify/Product/8851893813485";
+			
+			for ($i = 0; $i < count($variantTitles); $i++) {
+				// Split the title string by '/' into an array
+				$variantTitleArray = explode('/', $variantTitles[$i]);
+				$variantPriceArray = $variantPrices[$i];
+
+				// Access each element from the exploded array
+				$size = $variantTitleArray[0];  // "m" or "l"
+				$color = $variantTitleArray[1]; // "red" or "green"
+				$material = $variantTitleArray[2]; // "mx" or "cot"
+				$price[] = $variantPriceArray; // Store the corresponding price
+				
+				// Store the combination array
+				$combinations[] = $variantTitleArray;
+			}
+
+			// Create the variant data dynamically
+			foreach ($combinations as $index => $combination) {
+				$opt1 = $combination[0];
+				$opt2 = $combination[1];
+				$opt3 = $combination[2];
+				$myprice = $price[$index]; // Use the correct price for this combination
+				
+				$variants[] = [
+					'optionValues' => [
+						['name' => $opt1, 'optionName' => $product_option1],
+						['name' => $opt2, 'optionName' => $product_option2],
+						['name' => $opt3, 'optionName' => $product_option3],
+					],
+					'price' => $myprice
+				];
+
+				
+				// Add values to the productOptions array (if not already added)
+				// if (!in_array($size, $productOptions[0]['values'])) {
+				// 	$productOptions[0]['values'][] = $opt1;
+				// }
+				// if (!in_array($color, $productOptions[1]['values'])) {
+				// 	$productOptions[1]['values'][] = $opt2;
+				// }
+				// if (!in_array($material, $productOptions[2]['values'])) {
+				// 	$productOptions[2]['values'][] = $opt3;
+				// }
+
+				// Add values to the productOptions array (if not already added)
+				if (!in_array(["name" => ucfirst($opt1)], $productOptions[0]['values'])) {
+					$productOptions[0]['values'][] = ["name" => ucfirst($opt1)];
+				}
+				if (!in_array(["name" => ucfirst($opt2)], $productOptions[1]['values'])) {
+					$productOptions[1]['values'][] = ["name" => ucfirst($opt2)];
+				}
+				if (!in_array(["name" => ucfirst($opt3)], $productOptions[2]['values'])) {
+					$productOptions[2]['values'][] = ["name" => ucfirst($opt3)];
+				}
+
+			}
+			
+			// Construct the mutation query for creating a product with options
+			$queryProductCreate = '{
+				"query": "mutation CreateProductWithOptions($input: ProductInput!) { productCreate(input: $input) { userErrors { field message } product { id title description status productType vendor options { id name position values optionValues { id name } } variants(first: 5) { nodes { id title selectedOptions { name value } } } } } }",
+				"variables": {
+				"input": {
+					"title": "'.$product_title.'",
+					"descriptionHtml": "'.$product_desc.'",
+					"status": "'.$product_status.'",  
+					"productType": "'.$product_type.'",
+					"vendor": "'.$product_vendor.'",
+					"tags": "'.$product_tgs.'",
+					"productOptions": ' . json_encode($productOptions) . '
+				}
+				}
+			}';
+
+			//echo $queryProductCreate;
+
+			// Construct the GraphQL query
+			$queryBulkCreate = '
+			{
+			"query": "mutation productVariantsBulkCreate($productId: ID!, $variants: [ProductVariantsBulkInput!]!) { productVariantsBulkCreate(productId: $productId, variants: $variants) { userErrors { field message } product { id options { id name values position optionValues { id name hasVariants } } } productVariants { id title selectedOptions { name value } } } }",
+			"variables": {
+				"productId": "' . $productId . '",
+				"variants": ' . json_encode($variants) . '
+			}
+			}';
+
+			// Output the query (or send it using cURL, file_get_contents, etc.)
+			echo $queryBulkCreate;
+
+		}
 	}
 	
 	public function add_new_shop_install_token_post(){
