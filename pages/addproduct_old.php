@@ -414,7 +414,7 @@ tagsInputs.addEventListener('keydown', (event) => {
    
                filteredCombinations.forEach(combination => {
                    combinationHtml += `<div class="row"><div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">`;
-                   combinationHtml += `<div class="form-group row"><div class="col-sm-2 col-form-label"><span><input type="hidden" name="variat-title[]" value="${combination.join('/')}">${combination.join('/')}</span></div>`;
+                   combinationHtml += `<div class="form-group row"><div class="col-sm-2 col-form-label"><span><input type="hidden" name="variat-title[]" value="${combination.join(' / ')}">${combination.join(' / ')}</span></div>`;
                    combinationHtml += `<div class="col-sm-10"><input type='text' name='variat-price[]' value='' placeholder="price"></div></div>`;
                    combinationHtml += `</div></div>`;
                });
@@ -427,7 +427,7 @@ tagsInputs.addEventListener('keydown', (event) => {
            // If no sizes are added, just display the combinations without size headings
            variantCombinations.forEach(combination => {
                combinationHtml += `<tr>`;
-               combinationHtml += `<td><input type="hidden" name="variat-title[]" value="${combination.join('/')}">${combination.join('/')}</td>`;
+               combinationHtml += `<td><input type="hidden" name="variat-title[]" value="${combination.join(' / ')}">${combination.join(' / ')}</td>`;
                combinationHtml += `<td><input type='text' name='variat-price[]' value='' placeholder="price"></td>`;
                combinationHtml += `</tr>`;
            });
