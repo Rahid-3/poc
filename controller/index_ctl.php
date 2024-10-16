@@ -363,7 +363,8 @@ class index_ctl extends index_mdl
         }
 	}
 	public function add_product() {
-		/* This working fine
+		
+		// Start: This working fine Code is for the insert data in Databas
 		if (isset($_POST['product_Shop']) && !empty($_POST['product_Shop'])) {
 			$product_Shop = trim($_POST['product_Shop']);
 			$product_title = trim($_POST['product_title']);
@@ -373,7 +374,7 @@ class index_ctl extends index_mdl
 			$product_vendor = isset($_POST['product_vendor']) ? trim($_POST['product_vendor']) : "";
 			$product_tgs = isset($_POST['product_tgs']) ? trim($_POST['product_tgs']) : "";
 			$product_option = trim($_POST['product_VarOpt1']) . ',' . trim($_POST['product_VarOpt2']) . ',' . trim($_POST['product_VarOpt3']);
-			$shopify_product_id = ''; // Null as of now
+			//$shopify_product_id = ''; // Null as of now
 			$updated_at = date('Y-m-d H:i:s');
 			$created_at = date('Y-m-d H:i:s');
 	
@@ -386,7 +387,7 @@ class index_ctl extends index_mdl
 				'option_product' => $product_option,
 				'vendor' => $product_vendor,
 				'tags' => $product_tgs,
-				'shopify_product_id' => $shopify_product_id,
+				//'shopify_product_id' => $shopify_product_id,
 				'created_at' => $created_at,
 				'updated_at' => $updated_at
 			];
@@ -437,8 +438,11 @@ class index_ctl extends index_mdl
 	
 		header('location:index.php?do=product');
 		exit();
-		*/
+		// End: This working fine Code is for the insert data in Databas 
+		
 
+		/*
+		//Start This code is for the create Produe create and ProductBulkupload Queries
 		// New logic to create product and options 2k variants
 		if (isset($_POST['product_Shop']) && !empty($_POST['product_Shop'])) {
 			$product_Shop = trim($_POST['product_Shop']);
@@ -515,18 +519,7 @@ class index_ctl extends index_mdl
 					],
 					'price' => $myprice
 				];
-
 				
-				// Add values to the productOptions array (if not already added)
-				// if (!in_array($size, $productOptions[0]['values'])) {
-				// 	$productOptions[0]['values'][] = $opt1;
-				// }
-				// if (!in_array($color, $productOptions[1]['values'])) {
-				// 	$productOptions[1]['values'][] = $opt2;
-				// }
-				// if (!in_array($material, $productOptions[2]['values'])) {
-				// 	$productOptions[2]['values'][] = $opt3;
-				// }
 
 				// Add values to the productOptions array (if not already added)
 				if (!in_array(["name" => ucfirst($opt1)], $productOptions[0]['values'])) {
@@ -573,6 +566,8 @@ class index_ctl extends index_mdl
 			echo $queryBulkCreate;
 
 		}
+		//End This code is for the create Produe create and ProductBulkupload Queries		
+		*/
 	}
 	
 	public function add_new_shop_install_token_post(){
