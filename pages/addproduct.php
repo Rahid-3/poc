@@ -41,8 +41,8 @@
                         <label for="pro_status" class="col-sm-2 col-form-label">Status</label>
                         <div class="col-sm-10">
                            <select class="form-control" name="pro_status" id="pro_status">
-                                <option value="Draft">Draft</option>
-                                <option value="Active">Active</option>
+                                <option value="DRAFT">Draft</option>
+                                <option value="ACTIVE">Active</option>
                            </select>
                         </div>
                      </div>

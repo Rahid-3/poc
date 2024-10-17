@@ -40,7 +40,7 @@
                         <div id="master_div_product">
                             <!-- Placeholder for the product form -->
                             <table class="table table-bordered table-hover">
-                                <thead>
+                                <thead class="text-center">
                                     <tr>
                                         <th>Id</th>
                                         <th>Title</th>
@@ -48,11 +48,12 @@
                                         <th>Status</th>
                                         <th>Variant</th>
                                         <th>Actions</th>
+                                        <th>Process Status</th>
                                     </tr>
                                 </thead>
                                 <tbody id="product_list">
                                     <tr>
-                                        <td colspan="6" style="text-align:center;font-weight:bold;">Select Store for the Drop Down list</td>
+                                        <td colspan="7" style="text-align:center;font-weight:bold;">Select Store for the Drop Down list</td>
                                         
                                     </tr>
                                 </tbody>
