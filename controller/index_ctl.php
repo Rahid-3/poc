@@ -59,6 +59,9 @@ class index_ctl extends index_mdl
 			}else if ($action == 'get_product_list') {
 				$this->get_product_list();
 				exit;
+			}else if ($action == 'product_variant_list') {
+				$this->product_variant_list();
+				exit;
 			}else if ($action == 'delete_shop_install_token_post') {
 				$this->delete_shop_install_token_post();
 				exit;
@@ -320,25 +323,103 @@ class index_ctl extends index_mdl
 	}
 
 	public function get_product_list(){
+		if(isset($_POST['id'])){
+			$shopID = $_POST['id'];
+			//$getproductList = "SELECT title, vendor, product_status, shopify_product_id FROM `products` WHERE shop_id =". $shopID;
+			// Fetching the data with WHERE clause for shop_id = 12
+			$getproductList = "SELECT 
+			p.id AS product_id,
+			p.shopify_product_id,
+			p.title,
+			p.vendor,
+			p.product_status,
+			COUNT(v.id) AS variant_count
+			FROM 
+			products p
+			LEFT JOIN 
+			variants v ON p.id = v.product_id
+			WHERE 
+			p.shop_id = $shopID
+			GROUP BY 
+			p.id";
+			$all_list = parent::selectTable_f_mdl($getproductList);
+			$html = '';
+			if (!empty($all_list)) {
+				
+				foreach($all_list as $storevalue){
+					//$variantSql = "SELECT COUNT(id) as total_variant FROM `variants` WHERE product_id =". $storevalue['shopify_product_id'];
+					$process_status = (!empty($storevalue['shopify_product_id'])) ? '<span class="text-success">Updated</span>' : '<span class="text-info">Not Updated</span>';
+					// Create the variant link URL, passing product_id as a query parameter
+					$variant_url = "/shopify-2k-variants-creation/index.php?do=productvariant&product_id=" . $storevalue['product_id'];
+        
+					$html .= '<tr>';
+					$html .= '<td>' . $storevalue['shopify_product_id'] . '</td>';
+					$html .= '<td>' . $storevalue['title'] . '</td>';
+					$html .= '<td>' . $storevalue['vendor'] . '</td>';
+					$html .= '<td>' . $storevalue['product_status'] . '</td>';
+					$html .= '<td> Total: <a href="'.$variant_url.'">'.$storevalue['variant_count'].'</a></td>';
+					$html .= '<td> <a href="#">Edit</a> | <a href="#">Delete</a>
+                </td>';
+					$html .= '<td>'.$process_status.'</td>';
+					
+					
+					$html .= '</tr>';
+				}
+				
+				// $res['DATA'] = $html;
+				// echo json_encode($res, 1);
+			}else {
+				$html .= '<tr>';
+				$html .= '<td colspan="7" align="center">No Record Found</td>';
+				$html .= '</tr>';
+			}
+			$res['DATA'] = $html;
+				echo json_encode($res, 1);
+		}else { echo "Please Select Shop"; }
 		
-		$sql = "SELECT id, shop, install_token FROM `shop_install_token`";
-        $all_list = parent::selectTable_f_mdl($sql);
-        // Include the view (page)
-        //include('./pages/addproduct.php');  // Pass the $shops to the view
-        if (!empty($all_list)) {
-         $html = '';
-         $html .= '<select class="form-control" name="pro_shop" id="pro_shop">';
-         $html .= '<option value="">Select Shop</option>';
-         foreach($all_list as $key => $value){
-             $html .= '<option value="'.$value['id'].'">'.$value['shop'].'</option>';
-         }
-         $html .= '</select>';
-         $res['DATA'] = $html;       
-         echo json_encode($html);
-      
-        }else{
-         echo json_encode(['status'=>'error']);
-        }
+	}
+
+	public function product_variant_list(){
+		$ProductID = $_POST['id'];
+		//$html = '<h1>'.$ProductID.'</h1>';
+		$selectVarSQL = "SELECT * FROM `variants` WHERE product_id =". $ProductID;
+		$all_list = parent::selectTable_f_mdl($selectVarSQL);
+		$html = '';
+		$html .= '<div class="row">';
+		$html .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">';
+		$html .= '<div class="table-responsive">';
+		$html .= '<table class="table table-bordered table-hover">';
+
+		$html .= '<thead>';
+		$html .= '<tr>';
+		$html .= '<th>Id</th>';
+		$html .= '<th>Title</th>'; // class="sort_th" data-sort_field="shop_order_id"
+		//$html .= '<th>Installation Link</th>';
+		$html .= '<th>Price</th>';
+		$html .= '<th>Shopify variant Id</th>';
+		$html .= '<th>Actions</th>';
+		$html .= '</tr>';
+		$html .= '</thead>';
+
+		$html .= '<tbody>';
+		if (!empty($all_list)) {
+			foreach($all_list as $storevalue){
+				$html .= '<tr>';
+				$html .= '<td>' . $storevalue['id'] . '</td>';
+				$html .= '<td>' . $storevalue['title'] . '</td>';
+				$html .= '<td>' . $storevalue['price'] . '</td>';
+				$html .= '<td>' . $storevalue['shopify_variant_id'] . '</td>';
+				$html .= '<td>Edit Delete</td>';
+				$html .= '</tr>';
+			}
+		}
+		$html .= '</tbody>';
+		$html .= '</table>';
+		$html .= '</div>';
+		$html .= '</div>';
+		$html .= '</div>';
+		$res['DATA'] = $html;
+		echo json_encode($res, 1);
 	}
 
 	public function get_product_shop(){
