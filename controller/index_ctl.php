@@ -406,13 +406,12 @@ class index_ctl extends index_mdl
 				for ($i = 0; $i < count($variantTitles); $i++) {
 					$variantTitle = is_array($variantTitles[$i]) ? implode(',', $variantTitles[$i]) : trim($variantTitles[$i]);
 					$variantPrice = is_array($variantPrices[$i]) ? implode(',', $variantPrices[$i]) : trim($variantPrices[$i]);
-					$shopify_variant_id = ''; // Null as of now
+					//$shopify_variant_id = ''; // Null as of now
 
 					$insert_data = [
 						'product_id' => $product_id, // Ensure this is just the insert_id, not an array
 						'title' => $variantTitle,
 						'price' => $variantPrice,
-						'shopify_variant_id' => $shopify_variant_id,
 						'created_at' => $created_at,
 						'updated_at' => $updated_at
 					];
