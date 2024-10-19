@@ -47,9 +47,9 @@ class cronjob_ctl extends cronjob_mdl
 			// print_r($all_variant_list);
 			// echo '</pre>';
 		}
-		echo '<pre>';
-			print_r($all_product_list);
-			echo '</pre>';
+		// echo '<pre>';
+		// 	print_r($all_product_list);
+		// 	echo '</pre>';
 		$variantSelect = "SELECT id, product_id, title, price, shopify_variant_id FROM `variants` where product_id = '$prtoductTbl_id'";
 		$all_variant_list = parent::selectTable_f_mdl($variantSelect);
 		foreach ($all_variant_list as $key => $variantValue) {
@@ -59,6 +59,9 @@ class cronjob_ctl extends cronjob_mdl
 		// echo '<pre>';
 		// 	print_r($all_variant_list);
 		// 	echo '</pre>';
+		
+		/*
+		// Start Workig Code
 		$uniqueOptions = [
 			$optionNames[0] => [],
 			$optionNames[1] => [],
@@ -108,7 +111,71 @@ class cronjob_ctl extends cronjob_mdl
 				'price' => $variantPrices[$index]
 			];
 		}
+		// End Workig Code
+		*/
 
+		// Initialize uniqueOptions array dynamically based on available optionNames
+
+		// Build product options and avoid repetition of values
+		foreach ($varTitleArray as $variantTitles) {
+			// Iterate through each option name and its corresponding variant title
+			foreach ($optionNames as $index => $optionName) {
+				// Ensure the variant title exists for the given index before adding
+				if (isset($variantTitles[$index])) {
+					// If the option does not exist yet in $uniqueOptions, initialize it
+					if (!isset($uniqueOptions[$optionName])) {
+						$uniqueOptions[$optionName] = [];
+					}
+					// Add unique values to the corresponding option in $uniqueOptions
+					if (!in_array(['name' => trim($variantTitles[$index])], $uniqueOptions[$optionName])) {
+						$uniqueOptions[$optionName][] = ['name' => trim($variantTitles[$index])];
+					}
+				}
+			}
+		}
+
+		// Create product options for Shopify mutation dynamically
+		$productOptions = [];
+		foreach ($optionNames as $optionName) {
+			if (isset($uniqueOptions[$optionName])) {
+				$productOptions[] = [
+					"name" => trim($optionName),
+					"values" => $uniqueOptions[$optionName]
+				];
+			}
+		}
+
+		// Assign first array element's name and values to variables (if it exists)
+		$firstOptionName = isset($productOptions[0]['name']) ? $productOptions[0]['name'] : 'N/A';
+		$firstOptionValues = isset($productOptions[0]['values'][0]['name']) ? $productOptions[0]['values'][0]['name'] : 'N/A';
+
+		// Output the result
+		// echo "<br>";
+		// echo "First Option Name: " . $firstOptionName . "<br>";
+		// echo "First Option Values: " . $firstOptionValues . "<br>";
+		// echo "<br>";
+
+		foreach ($varTitleArray as $index => $combination) {
+			// Start with an empty 'optionValues' array
+			$optionValues = [];
+		
+			// Dynamically add option values only if they exist in both combination and optionNames
+			foreach ($optionNames as $optionIndex => $optionName) {
+				if (isset($combination[$optionIndex])) {
+					$optionValues[] = [
+						'name' => trim($combination[$optionIndex]),
+						'optionName' => trim($optionName)
+					];
+				}
+			}
+			
+			// Add the variant with its dynamic optionValues and price
+			$variants[] = [
+				'optionValues' => $optionValues, // This will be an empty array if no options exist
+				'price' => $variantPrices[$index]
+			];
+		}
+		
 
 		// Construct the mutation query for creating a product with options
 		$queryProductCreate = '{
@@ -125,13 +192,18 @@ class cronjob_ctl extends cronjob_mdl
 				}
 			}
 		}';
-		//echo $queryProductCreate;
+		// $br = "<br><br>";
+
+		// echo $br;
+		// echo "Product Create Query:" . $br;
+		// echo $queryProductCreate;
+		// echo $br;
 
 		/*
 		$productId = 'gid://shopify/Product/8852608221421'; // Replace with the actual product ID
 		$standAlonVarinat = 'gid://shopify/ProductVariant/47240259404013'; // Replace with the actual first variant ID
 		$OptionTempName = "Temp1"; // First variant option value temprory change to avoid duplicate product variant error
-		$OptionTempValue = ""; // product created in Store first Option value
+		$OptionTempValue = $firstOptionName; // product created in Store first Option value
 		// Construct the mutation query for creating product variants in bulk
 		$queryBulkCreate = '{
 			"query": "mutation productVariantsBulkCreate($productId: ID!, $variants: [ProductVariantsBulkInput!]!) { productVariantsBulkCreate(productId: $productId, variants: $variants) { userErrors { field message } product { id options { id name values position optionValues { id name hasVariants } } } productVariants { id title selectedOptions { name value } } } }",
@@ -140,6 +212,10 @@ class cronjob_ctl extends cronjob_mdl
 				"variants": ' . json_encode($variants) . '
 			}
 		}';
+		echo $br;
+		echo "Product Bulk Query:" . $br;
+		echo $queryBulkCreate;
+		echo $br;
 
 		$productVariantsUpdate = '{
 			"query": "mutation UpdateProductVariantsOptionValuesInBulk($productId: ID!, $variants: [ProductVariantsBulkInput!]!) { productVariantsBulkUpdate(productId: $productId, variants: $variants) { product { id title options { id position name values optionValues { id name hasVariants } } } productVariants { id title selectedOptions { name value } } userErrors { field message } } }",
@@ -158,6 +234,10 @@ class cronjob_ctl extends cronjob_mdl
 				]
 			}
 			}';
+			echo $br;
+			echo "Product First Variant Update Query:" . $br;
+			echo $productVariantsUpdate;
+			echo $br;
 
 			$productDeleteFirstVariant = '{
 			"query": "mutation productVariantsBulkDelete($productId: ID!, $variantsIds: [ID!]!) { productVariantsBulkDelete(productId: $productId, variantsIds: $variantsIds) { product { id } userErrors { field message } } }",
@@ -168,8 +248,15 @@ class cronjob_ctl extends cronjob_mdl
 				]
 			}
 			}';
+			echo $br;
+			echo "Product First Variant Delete Query:" . $br;
+			echo $productDeleteFirstVariant;
+			echo $br;
 			*/
 			
+			
+			
+			// Start This code working fine if all the Three options are added
 			// Fetch store information
 			$MyStoresql = "SELECT id, shop, install_token FROM `shop_install_token` WHERE id = '$shop_id'";
 			$MyStore_list = parent::selectTable_f_mdl($MyStoresql);
@@ -296,11 +383,11 @@ class cronjob_ctl extends cronjob_mdl
 					echo "First variant deleted successfully!";
 				}
 
-				echo '<pre>';
-				print_r($bulkCreateResponse);
-				echo '</pre>';
+				// echo '<pre>';
+				// print_r($bulkCreateResponse);
+				// echo '</pre>';
 
-				echo "<br><br><br>";
+				// echo "<br><br><br>";
 
 				// Variant Table: VarientID Update in the local db 
 				//$productVariants = $array['data']['productVariantsBulkCreate']['productVariants'];
@@ -342,6 +429,8 @@ class cronjob_ctl extends cronjob_mdl
 			} else {
 				echo "No store found with ID: $shop_id";
 			}
+			// End This code working fine if all the Three options are added
+			
 
 		
 	}

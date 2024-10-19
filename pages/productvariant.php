@@ -103,7 +103,7 @@ function getProductVariantList(id) {
             $("#table-body").html(obj.DATA);
 
             // Call pagination setup after table rows are populated
-            const rowsPerPage = 4;
+            const rowsPerPage = 10;
             let currentPage = 1;
             const tableBody = document.getElementById("table-body");
             const rows = Array.from(tableBody.querySelectorAll("tr"));
@@ -123,56 +123,64 @@ function getProductVariantList(id) {
 
                 pagination.innerHTML = "";
 
-                const prevLi = document.createElement("li");
-                prevLi.innerText = "Prev";
-                prevLi.classList.toggle("disabled", currentPage === 1);
-                prevLi.addEventListener("click", () => {
-                    if (currentPage > 1) {
-                        currentPage--;
-                        displayTableData(currentPage);
-                        updatePagination();
+                const createPageItem = (text, page, isActive = false, isDisabled = false) => {
+                    const li = document.createElement("li");
+                    li.innerText = text;
+                    if (isDisabled) {
+                        li.classList.add("disabled");
+                    } else {
+                        li.addEventListener("click", () => {
+                            currentPage = page;
+                            displayTableData(currentPage);
+                            updatePagination();
+                        });
                     }
-                });
+                    if (isActive) li.classList.add("active");
+                    return li;
+                };
+
+                const prevLi = createPageItem("Prev", currentPage - 1, false, currentPage === 1);
                 pagination.appendChild(prevLi);
 
-                for (let i = 1; i <= pageCount; i++) {
-                    const li = document.createElement("li");
-                    li.innerText = i;
-                    li.classList.toggle("active", i === currentPage);
-                    li.addEventListener("click", () => {
-                        currentPage = i;
-                        displayTableData(currentPage);
-                        updatePagination();
-                    });
-                    pagination.appendChild(li);
+                // Display pages with ellipses for large datasets
+                const maxPagesToShow = 5; // Number of pages to display around the current page
+                const half = Math.floor(maxPagesToShow / 2);
+
+                let startPage = Math.max(1, currentPage - half);
+                let endPage = Math.min(pageCount, currentPage + half);
+
+                if (startPage > 1) {
+                    pagination.appendChild(createPageItem(1, 1)); // First page
+                    if (startPage > 2) {
+                        pagination.appendChild(createPageItem("...", null, false, true)); // Ellipsis
+                    }
                 }
 
-                const nextLi = document.createElement("li");
-                nextLi.innerText = "Next";
-                nextLi.classList.toggle("disabled", currentPage === pageCount);
-                nextLi.addEventListener("click", () => {
-                    if (currentPage < pageCount) {
-                        currentPage++;
-                        displayTableData(currentPage);
-                        updatePagination();
+                for (let i = startPage; i <= endPage; i++) {
+                    pagination.appendChild(createPageItem(i, i, i === currentPage));
+                }
+
+                if (endPage < pageCount) {
+                    if (endPage < pageCount - 1) {
+                        pagination.appendChild(createPageItem("...", null, false, true)); // Ellipsis
                     }
-                });
+                    pagination.appendChild(createPageItem(pageCount, pageCount)); // Last page
+                }
+
+                const nextLi = createPageItem("Next", currentPage + 1, false, currentPage === pageCount);
                 pagination.appendChild(nextLi);
             }
 
             function updatePagination() {
                 const pageCount = Math.ceil(rows.length / rowsPerPage);
-                const paginationItems = document.querySelectorAll(".pagination li");
+                setupPagination(); // Refresh pagination display
 
-                paginationItems.forEach((item, index) => {
-                    if (index === 0) {
-                        item.classList.toggle("disabled", currentPage === 1);
-                    } else if (index === paginationItems.length - 1) {
-                        item.classList.toggle("disabled", currentPage === pageCount);
-                    } else {
-                        item.classList.toggle("active", parseInt(item.innerText) === currentPage);
-                    }
-                });
+                // Update the "disabled" status of Prev and Next buttons
+                const prevLi = document.querySelector(".pagination li:first-child");
+                const nextLi = document.querySelector(".pagination li:last-child");
+
+                prevLi.classList.toggle("disabled", currentPage === 1);
+                nextLi.classList.toggle("disabled", currentPage === pageCount);
             }
 
             // Initialize table data and pagination after rows are loaded
@@ -181,5 +189,6 @@ function getProductVariantList(id) {
         }
     });
 }
+
 
 </script>
