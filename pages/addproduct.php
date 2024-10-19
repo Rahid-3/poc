@@ -263,6 +263,8 @@ tagsInputs.addEventListener('keydown', (event) => {
            return true;
        }
    
+       
+       // this code is working fine for adding varins tags
        $(document).on('click', '#add-variant-btn', function() {
            if (variantCount >= 3) {
                alert('You can add up to 3 variants only.');
@@ -287,6 +289,72 @@ tagsInputs.addEventListener('keydown', (event) => {
            // Initialize the new tag input for this variant
            initTagInput(`tag-input${variantCount}`, `tags-input-container${variantCount}`, variantCount);
        });
+       
+
+       /* Need to work on this code
+       // Event handler for adding a new variant
+        $(document).on('click', '#add-variant-btn', function() {
+            if (variantCount >= 3) {
+                alert('You can add up to 3 variants only.');
+                $("#add-variant-btn").attr('disabled', true);
+                return;
+            }
+
+            variantCount++;
+            const newVariant = `
+                <div class="form-group row variant-group" id="variant-${variantCount}">
+                    <label for="pro_nm_opt${variantCount}" class="col-sm-2 col-form-label">Product Variant Option ${variantCount}</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control mb-1" name="pro_nm_opt${variantCount}" id="pro_nm_opt${variantCount}" placeholder="Product Option Name ${variantCount}" autocomplete="off">
+                        <div class="tags-input-container" id="tags-input-container${variantCount}">
+                            <input type="text" class="form-control" id="tag-input${variantCount}" placeholder="Add tags..." autocomplete="off">
+                        </div>
+                        <button type="button" class="btn btn-danger remove-variant-btn" data-variant-id="${variantCount}">Close</button>
+                    </div>
+                </div>
+            `;
+            $('#variant-container').append(newVariant);
+
+            // Initialize the new tag input for this variant
+            initTagInput(`tag-input${variantCount}`, `tags-input-container${variantCount}`, variantCount);
+        });
+
+        // Event handler for removing a variant
+        $(document).on('click', '.remove-variant-btn', function() {
+            const variantId = $(this).data('variant-id');
+            $(`#variant-${variantId}`).remove();
+            variantCount--; // Decrease the count as a variant is removed
+
+            // Optionally, enable the add button if the count is below 3
+            if (variantCount < 3) {
+                $("#add-variant-btn").attr('disabled', false);
+            }
+
+            // Re-sequence the remaining variants
+            reindexVariants();
+        });
+
+        // Function to reindex the remaining variants
+        function reindexVariants() {
+            let index = 1;
+            // Iterate over each remaining variant and update their attributes
+            $('.variant-group').each(function() {
+                // Update the label, name, ID, and data-variant-id
+                $(this).attr('id', `variant-${index}`);
+                $(this).find('label').attr('for', `pro_nm_opt${index}`).text(`Product Variant Option ${index}`);
+                $(this).find('input[type="text"]').attr('name', `pro_nm_opt${index}`).attr('id', `pro_nm_opt${index}`).attr('placeholder', `Product Option Name ${index}`);
+                $(this).find('.tags-input-container').attr('id', `tags-input-container${index}`);
+                $(this).find('input[type="text"]').attr('id', `tag-input${index}`);
+                $(this).find('.remove-variant-btn').attr('data-variant-id', index);
+
+                // Re-initialize the tag input for the renumbered variant
+                initTagInput(`tag-input${index}`, `tags-input-container${index}`, index);
+
+                index++;
+            });
+        }
+        */
+
    
        // Initialize first variant tag input
        //initTagInput('tag-input1', 'tags-input-container1', 1);
@@ -342,27 +410,92 @@ tagsInputs.addEventListener('keydown', (event) => {
             return false;
         }
         
-        // Variant Option 1 and Its Tags Validation
-        if(variant1.length > 0){
-            //productVarOpt1.trim();
-            productVarOpt1 = productVarOpt1.trim();
-            if(productVarOpt1 == ""){
-                alert("Enter the Variant Option 1");
-                return false;
-            }
-        }
-        console.log("Hey I'm Option 1 value: " + productVarOpt1);
+        // // Variant Option 1 and Its Tags Validation
+        // if(variant1.length > 0){
+        //     //productVarOpt1.trim();
+        //     productVarOpt1 = productVarOpt1.trim();
+        //     if(productVarOpt1 == ""){
+        //         alert("Variant Option 1: Name is Required");
+        //         return false;
+        //     }
+        // }
+
+        
         if(productVarOpt1 == undefined){
-            alert("Click the Add New Variant Button and Add the variant");
+            alert("Click on Add New Variant Button and Add the variant");
             return false;
         }
-        if(productVarOpt1){
-            if(variant1.length == 0){
-                alert("Create the Product Variant Option 1 Tags");
+        // Variant Option 1 and Its Tags Validation
+        if (productVarOpt1 != undefined) {
+            // Check if productVarOpt1 is empty and variant1 is an empty array
+            if (productVarOpt1.trim() === "" && Array.isArray(variant1) && variant1.length === 0) {
+                alert("Product Variant Option 1: Name and Tag are required.");
                 return false;
+            }
+
+            //Check if variant1 is an empty array
+            if (Array.isArray(variant1) && variant1.length === 0) {
+                alert("Please create a tag for Product Variant Option 1.");
+                return false;
+            }
+
+            if(variant1.length > 0){
+            //productVarOpt1.trim();
+                productVarOpt1 = productVarOpt1.trim();
+                if(productVarOpt1 == ""){
+                    alert("Variant Option 1: Name is Required");
+                    return false;
+                }
             }
         }
 
+        // Variant Option 2 and Its Tags Validation
+        if (productVarOpt2 != undefined) {
+            // Check if productVarOpt1 is empty and variant1 is an empty array
+            if (productVarOpt2.trim() === "" && Array.isArray(variant2) && variant2.length === 0) {
+                alert("Product Variant Option 2: Name and Tag are required.");
+                return false;
+            }
+
+            //Check if variant1 is an empty array
+            if (Array.isArray(variant2) && variant2.length === 0) {
+                alert("Please create a tag for Product Variant Option 2.");
+                return false;
+            }
+
+            if(variant2.length > 0){
+            //productVarOpt1.trim();
+                productVarOpt2 = productVarOpt2.trim();
+                if(productVarOpt2 == ""){
+                    alert("Variant Option 2: Name is Required");
+                    return false;
+                }
+            }
+        }
+
+        // Variant Option 3 and Its Tags Validation
+        if (productVarOpt3 != undefined) {
+            // Check if productVarOpt1 is empty and variant1 is an empty array
+            if (productVarOpt3.trim() === "" && Array.isArray(variant3) && variant3.length === 0) {
+                alert("Product Variant Option 3: Name and Tag are required.");
+                return false;
+            }
+
+            //Check if variant1 is an empty array
+            if (Array.isArray(variant3) && variant3.length === 0) {
+                alert("Please create a tag for Product Variant Option 3.");
+                return false;
+            }
+
+            if(variant3.length > 0){
+            //productVarOpt1.trim();
+                productVarOpt3 = productVarOpt3.trim();
+                if(productVarOpt3 == ""){
+                    alert("Variant Option 3: Name is Required");
+                    return false;
+                }
+            }
+        }
         
         
        // Filter out undefined or empty arrays (arrays with length 0)
@@ -510,25 +643,6 @@ function extractTagTexts(tagId, tg) {
            return [];
        }
    }
-</script>
-<script>
-// $(document).ready(function() {
-//     $(document).on('click', '#save_product_btn', function() {
-//         var newUrl = "index.php?do=product";
-//         console.log('clicked');
-//         $.ajax({
-//             url:'index.php',
-//             method: 'POST',
-//             data:{
-//                 'action': 'add_product'
-//             },
-//             success:function(result){
-//                 window.location.href = newUrl; // Redirect to the new URL
-//             }
-//         });
-//         // window.location.href = newUrl; // Redirect to the new URL
-//     });
-// });
 </script>
 <script>
     $(document).ready(function() {

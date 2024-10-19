@@ -455,7 +455,18 @@ class index_ctl extends index_mdl
 			$product_type = isset($_POST['product_type']) ? trim($_POST['product_type']) : "";
 			$product_vendor = isset($_POST['product_vendor']) ? trim($_POST['product_vendor']) : "";
 			$product_tgs = isset($_POST['product_tgs']) ? trim($_POST['product_tgs']) : "";
-			$product_option = trim($_POST['product_VarOpt1']) . ',' . trim($_POST['product_VarOpt2']) . ',' . trim($_POST['product_VarOpt3']);
+			//$product_option = trim($_POST['product_VarOpt1']) . ',' . trim($_POST['product_VarOpt2']) . ',' . trim($_POST['product_VarOpt3']);
+
+			$product_option = trim($_POST['product_VarOpt1']); // Always add product_VarOpt1
+
+			if (!empty(trim($_POST['product_VarOpt2']))) {
+				$product_option .= ',' . trim($_POST['product_VarOpt2']); // Add product_VarOpt2 if it has a value
+			}
+
+			if (!empty(trim($_POST['product_VarOpt3']))) {
+				$product_option .= ',' . trim($_POST['product_VarOpt3']); // Add product_VarOpt3 if it has a value
+			}
+
 			//$shopify_product_id = ''; // Null as of now
 			$updated_at = date('Y-m-d H:i:s');
 			$created_at = date('Y-m-d H:i:s');
