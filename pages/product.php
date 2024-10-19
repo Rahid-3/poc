@@ -92,7 +92,7 @@ $(document).on('change', '#pro_shop', function() {
 function  getProductList(id){
     $.ajax({
         url: 'index.php',
-        method: 'GET',
+        method: 'POST',
         data: {
             'action': 'get_product_list',
             'id': id
@@ -100,7 +100,7 @@ function  getProductList(id){
         success: function(result) {
             let obj = JSON.parse(result);
             console.log(obj);
-            $("#product_list").html(obj);
+            $("#product_list").html(obj.DATA);
             //Find Last ID
             if(result.length > 0){
                 
@@ -120,7 +120,7 @@ function  getProductList(id){
             url: 'index.php',
             method: 'GET',
             data: {
-                'action': 'get_product_shop'
+                'action': 'get_product_shop',
             },
             success: function(result) {
                 let obj = JSON.parse(result);

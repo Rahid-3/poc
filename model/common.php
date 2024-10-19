@@ -24,6 +24,7 @@ class common{
         // End Comment by R Dev
         $this->moduleList[] = ["module_title" => "product", "module_shortcode"=>"product"];
         $this->moduleList[] = ["module_title" => "addproduct", "module_shortcode"=>"addproduct"];
+        $this->moduleList[] = ["module_title" => "productvariant", "module_shortcode"=>"productvariant"];
 
     }
 }
