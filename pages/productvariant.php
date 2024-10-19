@@ -1,3 +1,28 @@
+<style>
+        .pagination {
+            display: flex;
+            list-style-type: none;
+            margin: 10px 0;
+        }
+
+        .pagination li {
+            margin: 0 5px;
+            padding: 5px 10px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+
+        .pagination li.active {
+            font-weight: bold;
+            background-color: #0056b3;
+        }
+
+        .pagination li.disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+    </style>
 <div class="content-wrapper">
    <!-- Content Header (Page header) -->
    <section class="content-header">
@@ -22,7 +47,31 @@
                
                   <div class="card-body">
                     <input type="hidden" id="product_id" value="<?php echo $_GET['product_id']; ?>">
-                    <div id="master_product_varinat"></div>
+                    <div id="master_product_varinat">
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Id</th>
+                                            <th>Title</th>
+                                            <th>Price</th>
+                                            <th>Shopify variant Id</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="table-body">
+
+                                    </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <ul class="pagination" id="pagination">
+                        <!-- Pagination controls will be generated here -->
+                        </ul>
+                    </div>
                     
                   </div>
                
@@ -34,13 +83,13 @@
 
 <script>
 $(document).ready(function() {
-    //getProductList();
-    //console.log("change");
+    // Get product ID
     const id = $("#product_id").val();
     console.log(id);
     getProductVariantList(id);
 });
-function  getProductVariantList(id){
+
+function getProductVariantList(id) {
     $.ajax({
         url: 'index.php',
         method: 'POST',
@@ -51,74 +100,86 @@ function  getProductVariantList(id){
         success: function(result) {
             let obj = JSON.parse(result);
             console.log(obj.DATA);
-            $("#master_product_varinat").html(obj.DATA);
-            //Find Last ID
-            if(result.length > 0){
-                
+            $("#table-body").html(obj.DATA);
+
+            // Call pagination setup after table rows are populated
+            const rowsPerPage = 4;
+            let currentPage = 1;
+            const tableBody = document.getElementById("table-body");
+            const rows = Array.from(tableBody.querySelectorAll("tr"));
+
+            function displayTableData(page) {
+                const start = (page - 1) * rowsPerPage;
+                const end = start + rowsPerPage;
+
+                rows.forEach((row, index) => {
+                    row.style.display = (index >= start && index < end) ? "" : "none";
+                });
             }
-            // End Find Last ID
+
+            function setupPagination() {
+                const pageCount = Math.ceil(rows.length / rowsPerPage);
+                const pagination = document.getElementById("pagination");
+
+                pagination.innerHTML = "";
+
+                const prevLi = document.createElement("li");
+                prevLi.innerText = "Prev";
+                prevLi.classList.toggle("disabled", currentPage === 1);
+                prevLi.addEventListener("click", () => {
+                    if (currentPage > 1) {
+                        currentPage--;
+                        displayTableData(currentPage);
+                        updatePagination();
+                    }
+                });
+                pagination.appendChild(prevLi);
+
+                for (let i = 1; i <= pageCount; i++) {
+                    const li = document.createElement("li");
+                    li.innerText = i;
+                    li.classList.toggle("active", i === currentPage);
+                    li.addEventListener("click", () => {
+                        currentPage = i;
+                        displayTableData(currentPage);
+                        updatePagination();
+                    });
+                    pagination.appendChild(li);
+                }
+
+                const nextLi = document.createElement("li");
+                nextLi.innerText = "Next";
+                nextLi.classList.toggle("disabled", currentPage === pageCount);
+                nextLi.addEventListener("click", () => {
+                    if (currentPage < pageCount) {
+                        currentPage++;
+                        displayTableData(currentPage);
+                        updatePagination();
+                    }
+                });
+                pagination.appendChild(nextLi);
+            }
+
+            function updatePagination() {
+                const pageCount = Math.ceil(rows.length / rowsPerPage);
+                const paginationItems = document.querySelectorAll(".pagination li");
+
+                paginationItems.forEach((item, index) => {
+                    if (index === 0) {
+                        item.classList.toggle("disabled", currentPage === 1);
+                    } else if (index === paginationItems.length - 1) {
+                        item.classList.toggle("disabled", currentPage === pageCount);
+                    } else {
+                        item.classList.toggle("active", parseInt(item.innerText) === currentPage);
+                    }
+                });
+            }
+
+            // Initialize table data and pagination after rows are loaded
+            displayTableData(currentPage);
+            setupPagination();
         }
     });
 }
 
 </script>
-<script>
-        const data = [
-            { id: 162, title: "m / Red / Cotton", price: 1, shopifyId: "gid://shopify/ProductVariant/47244169806061", actions: "Edit Delete" },
-            { id: 163, title: "m / Red / Silk", price: 2, shopifyId: "gid://shopify/ProductVariant/47244169838829", actions: "Edit Delete" },
-            { id: 164, title: "m / Green / Cotton", price: 3, shopifyId: "gid://shopify/ProductVariant/47244169871597", actions: "Edit Delete" },
-            { id: 165, title: "m / Green / Silk", price: 4, shopifyId: "gid://shopify/ProductVariant/47244169904365", actions: "Edit Delete" },
-            { id: 166, title: "l / Red / Cotton", price: 5, shopifyId: "gid://shopify/ProductVariant/47244169937133", actions: "Edit Delete" },
-            { id: 167, title: "l / Red / Silk", price: 6, shopifyId: "gid://shopify/ProductVariant/47244169969901", actions: "Edit Delete" },
-            { id: 168, title: "l / Green / Cotton", price: 7, shopifyId: "gid://shopify/ProductVariant/47244170002669", actions: "Edit Delete" },
-            { id: 169, title: "l / Green / Silk", price: 8, shopifyId: "gid://shopify/ProductVariant/47244170035437", actions: "Edit Delete" },
-        ];
-
-        const rowsPerPage = 4;
-        let currentPage = 1;
-
-        function displayTableData(page) {
-            const start = (page - 1) * rowsPerPage;
-            const end = start + rowsPerPage;
-            const paginatedData = data.slice(start, end);
-
-            const tableBody = document.getElementById("table-body");
-            tableBody.innerHTML = "";
-
-            paginatedData.forEach(row => {
-                const tr = document.createElement("tr");
-                tr.innerHTML = `<td>${row.id}</td><td>${row.title}</td><td>${row.price}</td><td>${row.shopifyId}</td><td>${row.actions}</td>`;
-                tableBody.appendChild(tr);
-            });
-        }
-
-        function setupPagination() {
-            const pageCount = Math.ceil(data.length / rowsPerPage);
-            const pagination = document.getElementById("pagination");
-
-            pagination.innerHTML = "";
-            for (let i = 1; i <= pageCount; i++) {
-                const li = document.createElement("li");
-                li.innerText = i;
-                li.classList.add(i === currentPage ? "active" : "");
-                li.addEventListener("click", () => {
-                    currentPage = i;
-                    displayTableData(currentPage);
-                    updatePagination();
-                });
-                pagination.appendChild(li);
-            }
-        }
-
-        function updatePagination() {
-            const paginationItems = document.querySelectorAll(".pagination li");
-            paginationItems.forEach((item, index) => {
-                item.classList.toggle("active", index + 1 === currentPage);
-            });
-        }
-
-        document.addEventListener("DOMContentLoaded", () => {
-            displayTableData(currentPage);
-            setupPagination();
-        });
-    </script>

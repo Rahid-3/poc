@@ -383,25 +383,26 @@ class index_ctl extends index_mdl
 		$ProductID = $_POST['id'];
 		//$html = '<h1>'.$ProductID.'</h1>';
 		$selectVarSQL = "SELECT * FROM `variants` WHERE product_id =". $ProductID;
-		$all_list = parent::selectTable_f_mdl($selectVarSQL);
 		$html = '';
-		$html .= '<div class="row">';
-		$html .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">';
-		$html .= '<div class="table-responsive">';
-		$html .= '<table class="table table-bordered table-hover">';
+		$all_list = parent::selectTable_f_mdl($selectVarSQL);
+		// $html = '';
+		// $html .= '<div class="row">';
+		// $html .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">';
+		// $html .= '<div class="table-responsive">';
+		// $html .= '<table class="table table-bordered table-hover">';
 
-		$html .= '<thead>';
-		$html .= '<tr>';
-		$html .= '<th>Id</th>';
-		$html .= '<th>Title</th>'; // class="sort_th" data-sort_field="shop_order_id"
-		//$html .= '<th>Installation Link</th>';
-		$html .= '<th>Price</th>';
-		$html .= '<th>Shopify variant Id</th>';
-		$html .= '<th>Actions</th>';
-		$html .= '</tr>';
-		$html .= '</thead>';
+		// $html .= '<thead>';
+		// $html .= '<tr>';
+		// $html .= '<th>Id</th>';
+		// $html .= '<th>Title</th>'; // class="sort_th" data-sort_field="shop_order_id"
+		// //$html .= '<th>Installation Link</th>';
+		// $html .= '<th>Price</th>';
+		// $html .= '<th>Shopify variant Id</th>';
+		// $html .= '<th>Actions</th>';
+		// $html .= '</tr>';
+		// $html .= '</thead>';
 
-		$html .= '<tbody>';
+		// $html .= '<tbody id="table-body">';
 		if (!empty($all_list)) {
 			foreach($all_list as $storevalue){
 				$html .= '<tr>';
@@ -413,11 +414,11 @@ class index_ctl extends index_mdl
 				$html .= '</tr>';
 			}
 		}
-		$html .= '</tbody>';
-		$html .= '</table>';
-		$html .= '</div>';
-		$html .= '</div>';
-		$html .= '</div>';
+		// $html .= '</tbody>';
+		// $html .= '</table>';
+		// $html .= '</div>';
+		// $html .= '</div>';
+		// $html .= '</div>';
 		$res['DATA'] = $html;
 		echo json_encode($res, 1);
 	}
