@@ -1,28 +1,3 @@
-<style>
-        .pagination {
-            display: flex;
-            list-style-type: none;
-            margin: 10px 0;
-        }
-
-        .pagination li {
-            margin: 0 5px;
-            padding: 5px 10px;
-            background-color: #007bff;
-            color: white;
-            cursor: pointer;
-        }
-
-        .pagination li.active {
-            font-weight: bold;
-            background-color: #0056b3;
-        }
-
-        .pagination li.disabled {
-            background-color: #cccccc;
-            cursor: not-allowed;
-        }
-    </style>
 <div class="content-wrapper">
    <!-- Content Header (Page header) -->
    <section class="content-header">
@@ -48,26 +23,38 @@
                   <div class="card-body">
                     <input type="hidden" id="product_id" value="<?php echo $_GET['product_id']; ?>">
                     <div id="master_product_varinat">
-                    <div class="row">
-                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                            <div class="table-responsive">
-                                <table class="table table-bordered table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th>Id</th>
-                                            <th>Title</th>
-                                            <th>Price</th>
-                                            <th>Shopify variant Id</th>
-                                            <th>Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="table-body">
-
-                                    </tbody>
-                                    </table>
+                       
+                        <div class="row">
+                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3 mb-3 pull-left">
+                                <?php if($_GET['shop_id']){ $url = "/shopify-2k-variants-creation/index.php?do=product&product_id=" . $_GET['shop_id']; } ?>
+                                <a href="<?php echo $url;?>"><i class="fa fa-arrow-left mb-3" aria-hidden="true"></i> Back</a>
+                                </div>
+                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3 mb-3 pull-right">
+                                    <input type="text" id="variant_search_input" name="keyword" class="form-control" placeholder="Search Product">
                                 </div>
                             </div>
                         </div>
+                        <div class="row">
+                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Id</th>
+                                                <th>Title</th>
+                                                <th>Price</th>
+                                                <th>Shopify variant Id</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="table-body">
+
+                                        </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
                         <ul class="pagination" id="pagination">
                         <!-- Pagination controls will be generated here -->
                         </ul>
@@ -87,15 +74,30 @@ $(document).ready(function() {
     const id = $("#product_id").val();
     console.log(id);
     getProductVariantList(id);
+
+    var input = document.getElementById("variant_search_input");
+        input.addEventListener("keypress", function(event) {
+        if (event.key === "Enter") {
+            event.preventDefault();
+                const urlSearchParams = new URLSearchParams(window.location.search);
+                const SearchproductId = urlSearchParams.get('product_id');
+                const shop_Id = urlSearchParams.get('shop_id');
+                $query = input.value;
+                var newShopUrl = "index.php?do=product&product_id=" + SearchproductId + "&shop_id=" + shop_Id
+                window.history.pushState({path: newShopUrl}, '', newShopUrl);
+                getProductVariantList(SearchproductId, $query);
+            }
+        });
 });
 
-function getProductVariantList(id) {
+function getProductVariantList(id, query) {
     $.ajax({
         url: 'index.php',
         method: 'POST',
         data: {
             'action': 'product_variant_list',
-            'id': id
+            'id': id,
+            'query': query
         },
         success: function(result) {
             let obj = JSON.parse(result);

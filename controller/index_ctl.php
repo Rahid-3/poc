@@ -327,6 +327,19 @@ class index_ctl extends index_mdl
 			$shopID = $_POST['id'];
 			//$getproductList = "SELECT title, vendor, product_status, shopify_product_id FROM `products` WHERE shop_id =". $shopID;
 			// Fetching the data with WHERE clause for shop_id = 12
+			$keyword = "";
+			if(isset($_POST['query'])){
+				$keyword = $_POST['query'];
+			}
+			// if ((isset($_GET['query'])) && (!empty($_GET['query']))) {
+			// 	$keyword = $_GET['query'];
+			// }
+			$cond_keyword = "";
+			if (isset($keyword) && !empty($keyword)) {
+				$cond_keyword = "AND p.title LIKE '%$keyword%'";
+			}
+			//var_dump($cond_keyword);
+			//echo $cond_keyword;
 			$getproductList = "SELECT 
 			p.id AS product_id,
 			p.shopify_product_id,
@@ -339,26 +352,29 @@ class index_ctl extends index_mdl
 			LEFT JOIN 
 			variants v ON p.id = v.product_id
 			WHERE 
-			p.shop_id = $shopID
+			p.shop_id = $shopID 
+			$cond_keyword 
 			GROUP BY 
 			p.id";
 			$all_list = parent::selectTable_f_mdl($getproductList);
 			$html = '';
 			if (!empty($all_list)) {
-				
+				$sr = 0;
 				foreach($all_list as $storevalue){
+					$sr++;
 					//$variantSql = "SELECT COUNT(id) as total_variant FROM `variants` WHERE product_id =". $storevalue['shopify_product_id'];
 					$process_status = (!empty($storevalue['shopify_product_id'])) ? '<span class="text-success">Updated</span>' : '<span class="text-info">Not Updated</span>';
 					// Create the variant link URL, passing product_id as a query parameter
-					$variant_url = "/shopify-2k-variants-creation/index.php?do=productvariant&product_id=" . $storevalue['product_id'];
+					$variant_url = "/shopify-2k-variants-creation/index.php?do=productvariant&product_id=" . $storevalue['product_id']. "&shop_id=" . $shopID;
         
 					$html .= '<tr>';
+					$html .= '<td>' . $sr . '</td>';
 					$html .= '<td>' . $storevalue['shopify_product_id'] . '</td>';
 					$html .= '<td>' . $storevalue['title'] . '</td>';
 					$html .= '<td>' . $storevalue['vendor'] . '</td>';
 					$html .= '<td>' . $storevalue['product_status'] . '</td>';
 					$html .= '<td> Total: <a href="'.$variant_url.'">'.$storevalue['variant_count'].'</a></td>';
-					$html .= '<td> <a href="#">Edit</a> | <a href="#">Delete</a>
+					$html .= '<td> <button type="button" data-id="' . $storevalue['shopify_product_id'] . '" data-title="' . $storevalue['title'] . '" data-vender="' . $storevalue['vendor'] . '" data-status="' . $storevalue['product_status'] . '" class="btn btn-primary btn-xs edit-product-btn">Edit</button>  <button type="button" class="btn btn-danger btn-xs delete-shop-btn">Delete</button>
                 </td>';
 					$html .= '<td>'.$process_status.'</td>';
 					
@@ -370,7 +386,7 @@ class index_ctl extends index_mdl
 				// echo json_encode($res, 1);
 			}else {
 				$html .= '<tr>';
-				$html .= '<td colspan="7" align="center">No Record Found</td>';
+				$html .= '<td colspan="8" align="center">No Record Found</td>';
 				$html .= '</tr>';
 			}
 			$res['DATA'] = $html;
@@ -381,8 +397,16 @@ class index_ctl extends index_mdl
 
 	public function product_variant_list(){
 		$ProductID = $_POST['id'];
+		$keyword = "";
+		if(isset($_POST['query'])){
+			$keyword = $_POST['query'];
+		}
+		$cond_keyword = "";
+		if (isset($keyword) && !empty($keyword)) {
+			$cond_keyword = "AND title LIKE '%$keyword%'";
+		}
 		//$html = '<h1>'.$ProductID.'</h1>';
-		$selectVarSQL = "SELECT * FROM `variants` WHERE product_id =". $ProductID;
+		$selectVarSQL = "SELECT * FROM `variants` WHERE product_id =". $ProductID." $cond_keyword";
 		$html = '';
 		$all_list = parent::selectTable_f_mdl($selectVarSQL);
 		// $html = '';
@@ -528,7 +552,7 @@ class index_ctl extends index_mdl
 			$_SESSION['MESSAGE'] = 'Shop ID is required.';
 		}
 	
-		header('location:index.php?do=product');
+		header('location:index.php?do=product&product_id='.$product_Shop);
 		exit();
 		// End: This working fine Code is for the insert data in Databas 
 		

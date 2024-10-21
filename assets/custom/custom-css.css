@@ -30,6 +30,7 @@
     cursor: pointer;
 }
 
+/* Start 2k varinat tool Style by R*/
 /* Start Style for the Product Tag by R Dev */
 .tags-input-container {
     display: flex;
@@ -80,3 +81,29 @@
     /* border-radius: 50%; */
     cursor: pointer;
 }
+/* Start Pagination Style by R */
+.pagination {
+    display: flex;
+    list-style-type: none;
+    margin: 10px 0;
+}
+
+.pagination li {
+    margin: 0 5px;
+    padding: 5px 10px;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+}
+
+.pagination li.active {
+    font-weight: bold;
+    background-color: #0056b3;
+}
+
+.pagination li.disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+/* End Pagination Style by R */
+/* Start 2k varinat tool Style by R*/

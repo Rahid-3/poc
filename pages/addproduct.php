@@ -322,17 +322,26 @@ tagsInputs.addEventListener('keydown', (event) => {
         // Event handler for removing a variant
         $(document).on('click', '.remove-variant-btn', function() {
             const variantId = $(this).data('variant-id');
-            $(`#variant-${variantId}`).remove();
-            variantCount--; // Decrease the count as a variant is removed
+            
+            // Ask for confirmation
+            const confirmDelete = confirm("Are you sure you want to delete this variant?");
+            
+            if (confirmDelete) {
+                // Proceed with deletion if the user confirms
+                $(`#variant-${variantId}`).remove();
+                variantCount--; // Decrease the count as a variant is removed
 
-            // Optionally, enable the add button if the count is below 3
-            if (variantCount < 3) {
-                $("#add-variant-btn").attr('disabled', false);
-                //$("#product-variant-combinations").html("");
+                // Optionally, enable the add button if the count is below 3
+                if (variantCount < 3) {
+                    $("#add-variant-btn").attr('disabled', false);
+                }
+
+                // Re-sequence the remaining variants
+                reindexVariants();
+            } else {
+                // Do nothing if the user cancels the action
+                return false;
             }
-
-            // Re-sequence the remaining variants
-            reindexVariants();
         });
 
         // Function to reindex the remaining variants
@@ -517,6 +526,34 @@ tagsInputs.addEventListener('keydown', (event) => {
                     alert("Variant Option 3: Name is Required");
                     return false;
                 }
+            }
+        }
+
+        if(productVarOpt1 != undefined && productVarOpt2 != undefined){
+            // Check if all three inputs have the same value
+            // var opt1 = productVarOpt1.trim();
+            // var opt2 = productVarOpt2.trim();
+            if (productVarOpt1 === productVarOpt2) {
+                alert("You've already used the option name: " + productVarOpt1);
+                return false;
+            }
+        }
+
+        if(productVarOpt1 !== undefined && productVarOpt2 !== undefined && productVarOpt3 !== undefined){
+            // Trim and convert values to ensure consistent comparison
+            var opt1 = productVarOpt1.trim();
+            var opt2 = productVarOpt2.trim();
+            var opt3 = productVarOpt3.trim();
+
+            // Check if all three inputs have the same value
+            if (opt1 === opt3) {
+                alert("You've already used the option name: " + opt1);
+                return false;
+            }
+            // Check if all three inputs have the same value
+            if (opt2 === opt3) {
+                alert("You've already used the option name: " + opt2);
+                return false;
             }
         }
         
