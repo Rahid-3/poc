@@ -263,6 +263,8 @@ tagsInputs.addEventListener('keydown', (event) => {
            return true;
        }
    
+       /*
+       // this code is working fine for adding varins tags
        $(document).on('click', '#add-variant-btn', function() {
            if (variantCount >= 3) {
                alert('You can add up to 3 variants only.');
@@ -287,6 +289,92 @@ tagsInputs.addEventListener('keydown', (event) => {
            // Initialize the new tag input for this variant
            initTagInput(`tag-input${variantCount}`, `tags-input-container${variantCount}`, variantCount);
        });
+       */
+
+     
+       // Event handler for adding a new variant
+        $(document).on('click', '#add-variant-btn', function() {
+            if (variantCount >= 3) {
+                alert('You can add up to 3 variants only.');
+                $("#add-variant-btn").attr('disabled', true);
+                return;
+            }
+
+            variantCount++;
+            const newVariant = `
+                <div class="form-group row variant-group" id="variant-${variantCount}">
+                    <label for="pro_nm_opt${variantCount}" class="col-sm-2 col-form-label">Product Variant Option ${variantCount}</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control mb-1" name="pro_nm_opt${variantCount}" id="pro_nm_opt${variantCount}" placeholder="Product Option Name ${variantCount}" autocomplete="off">
+                        <div class="tags-input-container" id="tags-input-container${variantCount}">
+                            <input type="text" class="form-control" id="tag-input${variantCount}" placeholder="Add tags..." autocomplete="off">
+                        </div>
+                        <button type="button" class="btn btn-danger remove-variant-btn" data-variant-id="${variantCount}">Close</button>
+                    </div>
+                </div>
+            `;
+            $('#variant-container').append(newVariant);
+
+            // Initialize the new tag input for this variant
+            initTagInput(`tag-input${variantCount}`, `tags-input-container${variantCount}`, variantCount);
+        });
+
+        // Event handler for removing a variant
+        $(document).on('click', '.remove-variant-btn', function() {
+            const variantId = $(this).data('variant-id');
+            
+            // Ask for confirmation
+            const confirmDelete = confirm("Are you sure you want to delete this variant?");
+            
+            if (confirmDelete) {
+                // Proceed with deletion if the user confirms
+                $(`#variant-${variantId}`).remove();
+                variantCount--; // Decrease the count as a variant is removed
+
+                // Optionally, enable the add button if the count is below 3
+                if (variantCount < 3) {
+                    $("#add-variant-btn").attr('disabled', false);
+                }
+
+                // Re-sequence the remaining variants
+                reindexVariants();
+            } else {
+                // Do nothing if the user cancels the action
+                return false;
+            }
+        });
+
+        // Function to reindex the remaining variants
+        function reindexVariants() {
+            let index = 1;
+            // Iterate over each remaining variant and update their attributes
+            $('.variant-group').each(function() {
+                // Update the variant group ID
+                $(this).attr('id', `variant-${index}`);
+                
+                // Update the label for the variant option
+                $(this).find('label').attr('for', `pro_nm_opt${index}`).text(`Product Variant Option ${index}`);
+                
+                // Update the variant option input field
+                $(this).find('input[type="text"].form-control.mb-1').attr('name', `pro_nm_opt${index}`).attr('id', `pro_nm_opt${index}`).attr('placeholder', `Product Option Name ${index}`);
+                
+                // Update the tags input container and input field
+                $(this).find('.tags-input-container').attr('id', `tags-input-container${index}`);
+                $(this).find('input.form-control:not(.mb-1)').attr('id', `tag-input${index}`);
+                
+                // Update the close button data-variant-id attribute
+                $(this).find('.remove-variant-btn').attr('data-variant-id', index);
+
+                // Re-initialize the tag input for the renumbered variant
+                initTagInput(`tag-input${index}`, `tags-input-container${index}`, index);
+
+                index++;
+            });
+            
+        }
+
+       
+
    
        // Initialize first variant tag input
        //initTagInput('tag-input1', 'tags-input-container1', 1);
@@ -342,27 +430,132 @@ tagsInputs.addEventListener('keydown', (event) => {
             return false;
         }
         
-        // Variant Option 1 and Its Tags Validation
-        if(variant1.length > 0){
-            //productVarOpt1.trim();
-            productVarOpt1 = productVarOpt1.trim();
-            if(productVarOpt1 == ""){
-                alert("Enter the Variant Option 1");
-                return false;
-            }
-        }
-        console.log("Hey I'm Option 1 value: " + productVarOpt1);
-        if(productVarOpt1 == undefined){
-            alert("Click the Add New Variant Button and Add the variant");
+        // // Variant Option 1 and Its Tags Validation
+        // if(variant1.length > 0){
+        //     //productVarOpt1.trim();
+        //     productVarOpt1 = productVarOpt1.trim();
+        //     if(productVarOpt1 == ""){
+        //         alert("Variant Option 1: Name is Required");
+        //         return false;
+        //     }
+        // }
+        //console.log("Option 1 varibale Rahid " + productVarOpt1);
+        
+        // if(productVarOpt1 == undefined){
+        //     alert("Click on Add New Variant Button and Add the variant");
+        //     return false;
+        // }
+
+        const variantContainer = document.getElementById('variant-container');
+
+        // Count the number of child divs with the class 'variant-group' inside the parent container
+        const variantCount = variantContainer.querySelectorAll('.variant-group').length;
+        if(variantCount == 0){
+            alert("Click on Add New Variant Button and Add the variant");
             return false;
         }
-        if(productVarOpt1){
-            if(variant1.length == 0){
-                alert("Create the Product Variant Option 1 Tags");
+        // Log the count to the console
+        console.log('Number of variant groups:', variantCount);
+
+        // Variant Option 1 and Its Tags Validation
+        if (productVarOpt1 != undefined) {
+            // Check if productVarOpt1 is empty and variant1 is an empty array
+            if (productVarOpt1.trim() === "" && Array.isArray(variant1) && variant1.length === 0) {
+                alert("Product Variant Option 1: Name and Tag are required.");
+                return false;
+            }
+
+            //Check if variant1 is an empty array
+            if (Array.isArray(variant1) && variant1.length === 0) {
+                alert("Please create a tag for Product Variant Option 1.");
+                return false;
+            }
+
+            if(variant1.length > 0){
+            //productVarOpt1.trim();
+                productVarOpt1 = productVarOpt1.trim();
+                if(productVarOpt1 == ""){
+                    alert("Variant Option 1: Name is Required");
+                    return false;
+                }
+            }
+        }
+
+        // Variant Option 2 and Its Tags Validation
+        if (productVarOpt2 != undefined) {
+            // Check if productVarOpt1 is empty and variant1 is an empty array
+            if (productVarOpt2.trim() === "" && Array.isArray(variant2) && variant2.length === 0) {
+                alert("Product Variant Option 2: Name and Tag are required.");
+                return false;
+            }
+
+            //Check if variant1 is an empty array
+            if (Array.isArray(variant2) && variant2.length === 0) {
+                alert("Please create a tag for Product Variant Option 2.");
+                return false;
+            }
+
+            if(variant2.length > 0){
+            //productVarOpt1.trim();
+                productVarOpt2 = productVarOpt2.trim();
+                if(productVarOpt2 == ""){
+                    alert("Variant Option 2: Name is Required");
+                    return false;
+                }
+            }
+        }
+
+        // Variant Option 3 and Its Tags Validation
+        if (productVarOpt3 != undefined) {
+            // Check if productVarOpt1 is empty and variant1 is an empty array
+            if (productVarOpt3.trim() === "" && Array.isArray(variant3) && variant3.length === 0) {
+                alert("Product Variant Option 3: Name and Tag are required.");
+                return false;
+            }
+
+            //Check if variant1 is an empty array
+            if (Array.isArray(variant3) && variant3.length === 0) {
+                alert("Please create a tag for Product Variant Option 3.");
+                return false;
+            }
+
+            if(variant3.length > 0){
+            //productVarOpt1.trim();
+                productVarOpt3 = productVarOpt3.trim();
+                if(productVarOpt3 == ""){
+                    alert("Variant Option 3: Name is Required");
+                    return false;
+                }
+            }
+        }
+
+        if(productVarOpt1 != undefined && productVarOpt2 != undefined){
+            // Check if all three inputs have the same value
+            // var opt1 = productVarOpt1.trim();
+            // var opt2 = productVarOpt2.trim();
+            if (productVarOpt1 === productVarOpt2) {
+                alert("You've already used the option name: " + productVarOpt1);
                 return false;
             }
         }
 
+        if(productVarOpt1 !== undefined && productVarOpt2 !== undefined && productVarOpt3 !== undefined){
+            // Trim and convert values to ensure consistent comparison
+            var opt1 = productVarOpt1.trim();
+            var opt2 = productVarOpt2.trim();
+            var opt3 = productVarOpt3.trim();
+
+            // Check if all three inputs have the same value
+            if (opt1 === opt3) {
+                alert("You've already used the option name: " + opt1);
+                return false;
+            }
+            // Check if all three inputs have the same value
+            if (opt2 === opt3) {
+                alert("You've already used the option name: " + opt2);
+                return false;
+            }
+        }
         
         
        // Filter out undefined or empty arrays (arrays with length 0)
@@ -373,7 +566,8 @@ tagsInputs.addEventListener('keydown', (event) => {
        var variantCombinations = generateCombinations(allVariants);
    
        // Display combinations even if size is not provided
-        var combinationHtml = `<form class="form-horizontal" method="post" action="index.php" enctype="multipart/form-data"><table class="table table-borderless"><input type="hidden" name="action" value="add_product">`;
+        var combinationHtml = `<form class="form-horizontal" method="post" action="index.php" enctype="multipart/form-data" id="productForm">`;
+        combinationHtml += `<table class="table table-borderless"><input type="hidden" name="action" value="add_product">`;
         combinationHtml += `<tr>`;
         combinationHtml += `<td colspan="2"><h3>Generated Product Variants for ${productShop}</h3></td>`;
         combinationHtml += '</tr>';
@@ -381,95 +575,109 @@ tagsInputs.addEventListener('keydown', (event) => {
         combinationHtml += `<tr>`;
         combinationHtml += `<td colspan="2"><input type="hidden" name="product_Shop" value="${productShop}"/>Shop: ${productShop}</td>`;
         combinationHtml += '</tr>';
-   
+
         combinationHtml += `<tr>`;
         combinationHtml += `<td colspan="2"><input type="hidden" name="product_title" value="${productTitle}"/>Product Title: ${productTitle}</td>`;
         combinationHtml += '</tr>';
 
-        if(productDesc != ""){
+        if (productDesc != "") {
             combinationHtml += `<tr>`;
             combinationHtml += `<td colspan="2"><input type="hidden" name="product_desc" value="${productDesc}"/>Product Description: ${productDesc}</td>`;
             combinationHtml += `</tr>`;
         }
-        if(productStatus != ""){
+        if (productStatus != "") {
             combinationHtml += `<tr>`;
             combinationHtml += `<td colspan="2"><input type="hidden" name="product_status" value="${productStatus}"/>Product Status: ${productStatus}</td>`;
             combinationHtml += `</tr>`;
         }
-        if(productType != ""){
+        if (productType != "") {
             combinationHtml += `<tr>`;
             combinationHtml += `<td colspan="2"><input type="hidden" name="product_type" value="${productType}"/>Product Type: ${productType}</td>`;
             combinationHtml += `</tr>`;
         }
-        if(productVender != ""){     
+        if (productVender != "") {
             combinationHtml += `<tr>`;
             combinationHtml += `<td colspan="2"><input type="hidden" name="product_vendor" value="${productVender}"/>Product Vender: ${productVender}</td>`;
             combinationHtml += `</tr>`;
         }
-       if (tgs.length > 0) {
-           combinationHtml += `<tr>`;
-           combinationHtml += `<td colspan="2"><input type="hidden" name="product_tgs" value="${tgs.join(', ')}"/>Tags: ${tgs.join(', ')}</td>`;
-           combinationHtml += `</tr>`;
-       }
+        if (tgs.length > 0) {
+            combinationHtml += `<tr>`;
+            combinationHtml += `<td colspan="2"><input type="hidden" name="product_tgs" value="${tgs.join(', ')}"/>Tags: ${tgs.join(', ')}</td>`;
+            combinationHtml += `</tr>`;
+        }
 
-       if(productVarOpt1 != "" && productVarOpt1 != undefined){
+        if (productVarOpt1 != "" && productVarOpt1 != undefined) {
             combinationHtml += `<tr>`;
             combinationHtml += `<td colspan="2"><input type="hidden" name="product_VarOpt1" value="${productVarOpt1}"/>Product Option: ${productVarOpt1}</td>`;
             combinationHtml += `</tr>`;
-       }
+        }
 
-       if(productVarOpt2 != "" && productVarOpt2 != undefined){
+        if (productVarOpt2 != "" && productVarOpt2 != undefined) {
             combinationHtml += `<tr>`;
             combinationHtml += `<td colspan="2"><input type="hidden" name="product_VarOpt2" value="${productVarOpt2}"/>Product Option: ${productVarOpt2}</td>`;
             combinationHtml += `</tr>`;
-       }
+        }
 
-       if(productVarOpt3 != "" && productVarOpt3 != undefined){
+        if (productVarOpt3 != "" && productVarOpt3 != undefined) {
             combinationHtml += `<tr>`;
             combinationHtml += `<td colspan="2"><input type="hidden" name="product_VarOpt3" value="${productVarOpt3}"/>Product Option: ${productVarOpt3}</td>`;
             combinationHtml += `</tr>`;
-       }
-   
-   
-       // If variant1 (Size Array) has values, create combinations with size headings
-       if (variant1.length > 0) {
-           variant1.forEach(size => {
-               // Filter combinations for the current size
-               let filteredCombinations = filterCombinationsBySize(variantCombinations, 0, size);
-   
-               // Add a toggle button and container for the size combinations
-               combinationHtml += `<tr><td colspan="2"><h4 class="toggle-size" style="cursor:pointer;">Size: ${size} Click to Exapand all/Collapse all)</h4></td></tr>`;
-               combinationHtml += `<tr class="combination-row"><td colspan="2" style="border:none;"><div class="size-combinations" style="display:none;">`; // Container to toggle
-   
-               filteredCombinations.forEach(combination => {
-                   combinationHtml += `<div class="row"><div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">`;
-                   combinationHtml += `<div class="form-group row"><div class="col-sm-2 col-form-label"><span><input type="hidden" name="variat-title[]" value="${combination.join(' / ')}">${combination.join(' / ')}</span></div>`;
-                   combinationHtml += `<div class="col-sm-10"><input type='text' name='variat-price[]' value='' placeholder="price"></div></div>`;
-                   combinationHtml += `</div></div>`;
-               });
-   
-               combinationHtml += `</div></td></tr>`; // Close the toggle container
-           });
-       } else {
-        if(variant2.length > 0 || variant3.length > 0)
-      
-           // If no sizes are added, just display the combinations without size headings
-           variantCombinations.forEach(combination => {
-               combinationHtml += `<tr>`;
-               combinationHtml += `<td><input type="hidden" name="variat-title[]" value="${combination.join(' / ')}">${combination.join(' / ')}</td>`;
-               combinationHtml += `<td><input type='text' name='variat-price[]' value='' placeholder="price"></td>`;
-               combinationHtml += `</tr>`;
-           });
-        
-       }
-   
-       combinationHtml += `<tr>`;
-       combinationHtml += `<td><button type="submit" id="save_product_btn" class="btn btn-info save_product_btn">Save Product</button></td>`;
-       combinationHtml += `</tr>`;
-       combinationHtml += '</table></form>';
-   
-       $('#product-variant-combinations-inner').html(combinationHtml);
-       //$('#product-variant-combinations-inner1').html(combinationHtml);
+        }
+
+        // If variant1 (Size Array) has values, create combinations with size headings
+        if (variant1.length > 0) {
+            variant1.forEach(size => {
+                // Filter combinations for the current size
+                let filteredCombinations = filterCombinationsBySize(variantCombinations, 0, size);
+
+                // Add a toggle button and container for the size combinations
+                combinationHtml += `<tr><td colspan="2"><h4 class="toggle-size" style="cursor:pointer;">Size: ${size} Click to Expand all/Collapse all)</h4></td></tr>`;
+                combinationHtml += `<tr class="combination-row"><td colspan="2" style="border:none;"><div class="size-combinations" style="display:none;">`; // Container to toggle
+
+                filteredCombinations.forEach(combination => {
+                    combinationHtml += `<div class="row"><div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">`;
+                    combinationHtml += `<div class="form-group row"><div class="col-sm-2 col-form-label"><span><input type="hidden" name="variat-title[]" value="${combination.join(' / ')}">${combination.join(' / ')}</span></div>`;
+                    combinationHtml += `<div class="col-sm-10"><input type='text' name='variat-price[]' value='' placeholder="price" class="price-input"></div></div>`;
+                    combinationHtml += `</div></div>`;
+                });
+
+                combinationHtml += `</div></td></tr>`; // Close the toggle container
+            });
+        } else {
+            if (variant2.length > 0 || variant3.length > 0) {
+                // If no sizes are added, just display the combinations without size headings
+                variantCombinations.forEach(combination => {
+                    combinationHtml += `<tr>`;
+                    combinationHtml += `<td><input type="hidden" name="variat-title[]" value="${combination.join(' / ')}">${combination.join(' / ')}</td>`;
+                    combinationHtml += `<td><input type='text' name='variat-price[]' value='' placeholder="price" class="price-input"></td>`;
+                    combinationHtml += `</tr>`;
+                });
+            }
+        }
+
+        combinationHtml += `<tr>`;
+        combinationHtml += `<td><button type="submit" id="save_product_btn" class="btn btn-info save_product_btn">Save Product</button></td>`;
+        combinationHtml += `</tr>`;
+        combinationHtml += '</table></form>';
+
+        $('#product-variant-combinations-inner').html(combinationHtml);
+
+        // Add validation for price fields
+        $('#productForm').on('submit', function(e) {
+            var valid = true;
+            $('.price-input').each(function() {
+                if ($(this).val() === '') {
+                    alert('Please enter a price for all product variants.');
+                    valid = false;
+                    return false;  // Exit the loop once an empty field is found
+                }
+            });
+
+            if (!valid) {
+                e.preventDefault();  // Prevent form submission if validation fails
+            }
+        });
+
    });
    
    // Add toggle functionality for size headings
@@ -510,25 +718,6 @@ function extractTagTexts(tagId, tg) {
            return [];
        }
    }
-</script>
-<script>
-// $(document).ready(function() {
-//     $(document).on('click', '#save_product_btn', function() {
-//         var newUrl = "index.php?do=product";
-//         console.log('clicked');
-//         $.ajax({
-//             url:'index.php',
-//             method: 'POST',
-//             data:{
-//                 'action': 'add_product'
-//             },
-//             success:function(result){
-//                 window.location.href = newUrl; // Redirect to the new URL
-//             }
-//         });
-//         // window.location.href = newUrl; // Redirect to the new URL
-//     });
-// });
 </script>
 <script>
     $(document).ready(function() {
