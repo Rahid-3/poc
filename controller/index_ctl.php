@@ -434,7 +434,7 @@ class index_ctl extends index_mdl
 				$html .= '<td>' . $storevalue['title'] . '</td>';
 				$html .= '<td>' . $storevalue['price'] . '</td>';
 				$html .= '<td>' . $storevalue['shopify_variant_id'] . '</td>';
-				$html .= '<td>Edit Delete</td>';
+				$html .= '<td><button type="button" class="btn btn-primary btn-xs edit-product-variant-btn">Edit</button> <button type="button" data-id="' . $storevalue['id'] . '" class="btn btn-danger btn-xs edit-product-variant-btn">Delete</button></td>';
 				$html .= '</tr>';
 			}
 		}
