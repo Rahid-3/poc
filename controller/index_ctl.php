@@ -406,7 +406,7 @@ class index_ctl extends index_mdl
 			$cond_keyword = "AND title LIKE '%$keyword%'";
 		}
 		//$html = '<h1>'.$ProductID.'</h1>';
-		$selectVarSQL = "SELECT * FROM `variants` WHERE product_id =". $ProductID." $cond_keyword";
+		$selectVarSQL = "SELECT * FROM `variants` WHERE product_id =". $ProductID ." $cond_keyword";
 		$html = '';
 		$all_list = parent::selectTable_f_mdl($selectVarSQL);
 		// $html = '';
