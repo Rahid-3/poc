@@ -309,7 +309,7 @@ tagsInputs.addEventListener('keydown', (event) => {
                         <div class="tags-input-container" id="tags-input-container${variantCount}">
                             <input type="text" class="form-control" id="tag-input${variantCount}" placeholder="Add tags..." autocomplete="off">
                         </div>
-                        <button type="button" class="btn btn-danger remove-variant-btn" data-variant-id="${variantCount}">Close</button>
+                        <button type="button" class="btn btn-danger remove-variant-btn" data-variant-id="${variantCount}">Delete</button>
                     </div>
                 </div>
             `;
